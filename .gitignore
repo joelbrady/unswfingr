@@ -4,3 +4,4 @@ unswfingr/settings_private.py
 *~
 tags
 *.pyc
+unswfingr.db
