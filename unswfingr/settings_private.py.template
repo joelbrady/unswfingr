@@ -1,5 +1,6 @@
 # this file contains all the settings that should be per machine, for dev purposes
 
+# the path ones probably only need to be set on a production machine
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
