@@ -5,18 +5,35 @@
     <title>Test</title>
     <!-- Bootstrap core CSS -->
     {% load staticfiles %}
-    <link href="{%static "css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "css/starter-template.css"%}" rel="stylesheet">
+
+    <link href="{% static "css/signin.css"%}" rel="stylesheet">
+
 
 </head>
 <body>
 {% include "header.html" %}
 
 <div class="container">
-    <h1>Test page</h1>
+    <h3>unswFingr is currently under development.</h3>
+
+    <hr>
 
 
-    The header should be above me
+    <div class="container">
+
+        <form class="form-signin">
+            <h2 class="form-signin-heading">Interested in unswFinger?</h2>
+
+            <h4 class ="form-signin-heading">Sign up for alerts and news.</h4>
+            <input type="text" class="form-control" placeholder="Email address" autofocus>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Send me details.</button>
+        </form>
+
+    </div> <!-- /container -->
+
+
 
 </div>
 <!-- Bootstrap core JavaScript
