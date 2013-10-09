@@ -12,7 +12,7 @@ def index(request):
 
 def login(request):
     if request.user.is_authenticated():
-        redirect('main.views.index')
+        return redirect('main.views.index')
     if request.POST:
         # load up the form with data from the POST request
         form = LoginForm(request.POST)
