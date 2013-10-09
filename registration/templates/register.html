@@ -2,17 +2,42 @@
 <head>
     <title>unswFingr.me</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+
+    {% load staticfiles %}
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "css/signin.css"%}" rel="stylesheet">
 </head>
 <body>
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-</form>
+<div class="container">
+    <form class="form-horizontal" method="post" action="">
+        <h2 class=""form-signin-heading">Register</h2>
 
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+            <div class="col-lg-10">
+                    {{ field}}
+
+            </div>
+            <span class="text-danger">{{ field.errors }}</span>
+        </div>
+
+        {% endfor %}
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+
+
+                <button class="btn btn-primary" type="submit">Register</button>
+
+            </div>
+        </div>
+
+    </form>
+</div>
 </body>
 </html>
