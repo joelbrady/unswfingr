@@ -5,17 +5,19 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'unswfingr.views.home', name='home'),
-    # url(r'^unswfingr/', include('unswfingr.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
+    # admin interface
     url(r'^admin/', include(admin.site.urls)),
 
+    # new user registration
     url(r'^registration/', include('registration.urls')),
 
-    #
+    # example pages
     url(r'^ex/', include('ex.urls')),
+
+    # main index page
+    url(r'^', include('main.urls')),
 )
