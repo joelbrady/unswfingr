@@ -11,11 +11,30 @@ class FingrUser(models.Model):
     """
 
     django_user = models.ForeignKey(User, unique=True)
+    username = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=100)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    friends = models.ManyToManyField('self')
 
-    def get_username(self):
+    def _get_username(self):
         return self.django_user.username
+
+    def _get_email(self):
+        return self.django_user.email
+
+    def _friends_list(self):
+        return self.friends.all()
+
+    friends_list = property(_friends_list)
+
+    def __unicode__(self):
+        return self.username
+
+
+def user_to_fingr(django_user):
+    return FingrUser.objects.filter(django_user=django_user)[0]
+
 
 def create_fingr_user(email, password, **kwargs):
     """
@@ -23,6 +42,6 @@ def create_fingr_user(email, password, **kwargs):
     please do not create one yourself
     """
     django_user = User.objects.create_user(username=email, email=email, password=password)
-    fingr_user = FingrUser(django_user=django_user, **kwargs)
+    fingr_user = FingrUser(django_user=django_user, username=email, email=email, **kwargs)
     fingr_user.save()
     return fingr_user

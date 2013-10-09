@@ -9,7 +9,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = create_fingr_user(form.cleaned_data['email'], form.cleaned_data['password'])
-            return render(request, 'register_result.html', {'email': user.get_username()})
+            return render(request, 'register_result.html', {'email': user.username})
     else:
         form = RegistrationForm()
 

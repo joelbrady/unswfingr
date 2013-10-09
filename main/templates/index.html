@@ -12,6 +12,14 @@ else shows home page for user
 {% if authenticated %}
 Welcome to unswFingr.me {{ username }}!<br>
 user: {{ user }}<br>
+Friends List:<br>
+{% for friend in user.friends_list %}
+Friend: {{ friend.username }}<br>
+{% endfor %}
+User List:<br>
+{% for user in userlist %}
+User: <a href="{% url 'main.views.add_friend' user.username %}">{{ user.username }}</a><br>
+{% endfor %}
 <a href="{% url 'main.views.logout' %}">Logout</a>
 {% else %}
 Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
