@@ -1,13 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login unswfingr.me</title>
-</head>
-<body>
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-</form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+       <form class="form-horizontal" method="post" action="">
+            <h2 class=""form-signin-heading">Login</h2>
+
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+                <div class="col-lg-10">
+                        {{ field}}
+
+                </div>
+                <span class="text-danger">{{ field.errors }}</span>
+            </div>
+
+            {% endfor %}
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+
+
+                    <button class="btn btn-primary" type="submit">Login</button>
+
+                </div>
+            </div>
+
+        </form>
+{% endblock %}

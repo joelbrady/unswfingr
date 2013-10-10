@@ -12,14 +12,17 @@
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/">Home</a></li>
 
-                {% if logged_in %}
-                     <li><a href="/logout">Log out</a></li>
+                {% if authenticated %}
+                <li><a href="{% url 'main.views.logout' %}">Log out</a></li>
 
                 {% else %}
-                     <li><a href="/registration">Register</a></li>
+                <li><a href="{% url 'main.views.login' %}">Login</a></li>
+
+                <li><a href="{% url 'registration.views.register' %}">Register</a></li>
+
 
                 {% endif %}
-                <li><a href="/Admin">Administrator</a></li>
+                <li><a href="/admin">Administrator</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

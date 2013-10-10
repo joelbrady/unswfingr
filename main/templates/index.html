@@ -1,29 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>unswFingr.me</title>
-</head>
-<body>
-{% comment %}
-Index page shows link to registration if not signed in,
-else shows home page for user
-{% endcomment %}
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% comment %}
+    Index page shows link to registration if not signed in,
+    else shows home page for user
+    {% endcomment %}
 
-{% if authenticated %}
-Welcome to unswFingr.me {{ username }}!<br>
-user: {{ user }}<br>
-Friends List:<br>
-{% for friend in user.friends_list %}
-Friend: {{ friend.username }}<br>
-{% endfor %}
-User List:<br>
-{% for user in userlist %}
-User: <a href="{% url 'main.views.add_friend' user.username %}">{{ user.username }}</a><br>
-{% endfor %}
-<a href="{% url 'main.views.logout' %}">Logout</a>
-{% else %}
-Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
-Click <a href="{% url 'registration.views.register' %}">here</a> to register.
-{% endif %}
-</body>
-</html>
+    {% if authenticated %}
+    Welcome to unswFingr.me {{ username }}!<br>
+    user: {{ user }}<br>
+    Friends List:<br>
+    {% for friend in user.friends_list %}
+    Friend: {{ friend.username }}<br>
+    {% endfor %}
+    User List:<br>
+    {% for user in userlist %}
+    User: <a href="{% url 'main.views.add_friend' user.username %}">{{ user.username }}</a><br>
+    {% endfor %}
+    <a href="{% url 'main.views.logout' %}">Logout</a>
+    {% else %}
+    Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
+    Click <a href="{% url 'registration.views.register' %}">here</a> to register.
+    {% endif %}
+
+{% endblock %}
