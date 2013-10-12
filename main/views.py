@@ -58,27 +58,20 @@ def set_status(request):
         form = StatusForm(request.POST)
         if form.is_valid():
             choice = form.cleaned_data['available']
-            user = FingrUser.objects.filter(django_user=request.user)[0]
-
+            user = user_to_fingr(request.user)
             if choice == 'ON':
-                print('Set available to true')
-
                 user.available = True
             else:
-                print('Set available to false')
-
                 user.available = False
-
-
-
-
+            user.save()
     else:
         form = StatusForm()
 
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['user'] = user_to_fingr(request.user)
+        context['form'] = form
 
-    context['form'] = form
+
 
     return render(request, 'status.html', context)
