@@ -42,7 +42,7 @@ def add_friend(request, something):
     """
     something should be the username that we want to add as a friend
     """
-    user = FingrUser.objects.filter(django_user=request.user)[0]
+    user = user_to_fingr(request.user)
     target_user = FingrUser.objects.filter(username=something)[0]
     if target_user.username != request.user.username:
         user.friends.add(target_user)
