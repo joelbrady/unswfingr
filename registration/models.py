@@ -36,6 +36,9 @@ class FingrUser(models.Model):
 
 
 def user_to_fingr(django_user):
+    """
+    Converts a django auth user to a FingrUser
+    """
     return FingrUser.objects.filter(django_user=django_user)[0]
 
 
