@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Available Friends{% endblock %}
+{% block content %}
+
+
+{% if authenticated %}
+    <h2 class="text-success">
+       Free:
+    </h2>
+
+    {% for friend in user.friends_list %}
+     {% if friend.available %}
+     {{ friend.username }} - <span class="text-success">Free</span> <br />
+    {% endif %}
+    {% endfor %}
+
+    <h2 class="text-danger">
+       Unavailable:
+    </h2>
+
+    {% for friend in user.friends_list %}
+     {% if not friend.available %}
+     {{ friend.username }} - <span class="text-danger">Unavailable</span> <br />
+    {% endif %}
+    {% endfor %}
+
+{% endif %}
+{% endblock %}

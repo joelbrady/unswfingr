@@ -51,6 +51,7 @@ def add_friend(request, something):
         print "user tried to add themselves"
     return redirect('main.views.index')
 
+
 def set_status(request):
     context = {}
 
@@ -72,6 +73,13 @@ def set_status(request):
         context['user'] = user_to_fingr(request.user)
         context['form'] = form
 
-
-
     return render(request, 'status.html', context)
+
+
+def friends(request):
+    context = {}
+    if request.user.is_authenticated():
+        context['authenticated'] = True
+        context['userlist'] = FingrUser.objects.all()
+        context['user'] = user_to_fingr(request.user)
+    return render(request, 'available_friends.html', context)
