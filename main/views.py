@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.shortcuts import render, redirect
-from main.forms import LoginForm
+from main.forms import LoginForm, StatusForm
 from registration.models import FingrUser, user_to_fingr
 
 
@@ -50,3 +50,35 @@ def add_friend(request, something):
     else:
         print "user tried to add themselves"
     return redirect('main.views.index')
+
+def set_status(request):
+    context = {}
+
+    if request.POST:
+        form = StatusForm(request.POST)
+        if form.is_valid():
+            choice = form.cleaned_data['available']
+            user = FingrUser.objects.filter(django_user=request.user)[0]
+
+            if choice == 'ON':
+                print('Set available to true')
+
+                user.available = True
+            else:
+                print('Set available to false')
+
+                user.available = False
+
+
+
+
+    else:
+        form = StatusForm()
+
+    if request.user.is_authenticated():
+        context['authenticated'] = True
+        context['user'] = user_to_fingr(request.user)
+
+    context['form'] = form
+
+    return render(request, 'status.html', context)

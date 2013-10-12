@@ -17,6 +17,9 @@ class FingrUser(models.Model):
     last_name = models.CharField(max_length=50)
     friends = models.ManyToManyField('self')
 
+    available = models.BooleanField(default=False)
+
+
     def _get_username(self):
         return self.django_user.username
 

@@ -6,4 +6,5 @@ urlpatterns = patterns('',
     url(r'^login$', views.login),
     url(r'^logout$', views.logout),
     url(r'^add_friend/([^/]+)/?$', views.add_friend),
+    url(r'^status$', views.set_status),
 )
