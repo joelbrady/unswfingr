@@ -98,6 +98,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'registration',
     'main',
+    'profile',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

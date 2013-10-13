@@ -18,6 +18,9 @@ urlpatterns = patterns('',
     # example pages
     url(r'^ex/', include('ex.urls')),
 
+    #profile page
+    url(r'^profile/', include('profile.urls')),
+
     # main index page
     url(r'^', include('main.urls')),
 )
