@@ -1,4 +1,4 @@
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-default navbar-static-top">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -8,13 +8,15 @@
             </button>
             <a class="navbar-brand" href="#">unswFingr.me</a>
         </div>
-        <div class="collapse navbar-collapse">
+        <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Home <span class="glyphicon glyphicon-home" /></a></li>
+                <li><a href="/">Home <span class="glyphicon glyphicon-home" /></a></li>
 
                 {% if authenticated %}
                 <li><a href="{% url 'main.views.logout' %}">Log out <span class="glyphicon glyphicon-off" /></a></li>
                 <li><a href="{% url 'main.views.set_status' %}">Update Availability <span class="glyphicon glyphicon-time" /></a></li>
+               <li><a href="{% url 'profile.views.edit_profile' %}">Update Profile <span class="glyphicon glyphicon-user" /></a></li>
+
                 <li><a href="{% url 'main.views.friends' %}">Friends <span class="glyphicon glyphicon-user" /></a></li>
 
 
