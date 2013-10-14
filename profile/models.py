@@ -64,6 +64,7 @@ class Course(models.Model):
     tutorials = models.ManyToManyField(Day_Times, related_name='tutorials_times')
     labs = models.ManyToManyField(Day_Times, related_name='lab_times')
 
+
     def __unicode__(self):
         # this method is used when an instance of this
         # is printed in the interactive shell

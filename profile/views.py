@@ -21,6 +21,8 @@ def index(request):
 
     CourseFormSet = formset_factory(CourseForm, max_num=10, formset=RequiredFormSet)
     LectureFormSet = formset_factory(LectureForm, max_num=10, formset=RequiredFormSet)
+    TutorialFormSet = formset_factory(TutorialForm, max_num=10, formset=RequiredFormSet)
+    LaboratoryFormSet = formset_factory(LabForm, max_num=10, formset=RequiredFormSet)
     DayTimeFormSet = formset_factory(DayTimesForm,max_num=10, formset=RequiredFormSet)
 
     if request.method == 'POST': # If the form has been submitted...
@@ -37,9 +39,11 @@ def index(request):
             return HttpResponse('thanks') # Redirect to a 'success' page
     else:
         profile_form = ProfileForm()
-        course_formset = CourseFormSet()
-        lecture_formset = LectureFormSet()
-        day_time_formset = DayTimeFormSet()
+        course_formset = CourseFormSet(prefix='course')
+        lecture_formset = LectureFormSet(prefix='lecture')
+        day_time_formset = DayTimeFormSet(prefix='day_time')
+        tutorial_formset = TutorialFormSet(prefix='tutorial')
+        laboratory_formset = LaboratoryFormSet(prefix='laboratory')
 
     # For CSRF protection
     # See http://docs.djangoproject.com/en/dev/ref/contrib/csrf/
@@ -47,10 +51,12 @@ def index(request):
          'course_formset': course_formset,
          'lecture_formset': lecture_formset,
          'day_time_formset': day_time_formset,
+         'tutorial_formset': tutorial_formset,
+         'laboratory_formset': laboratory_formset,
         }
     #c.update(csrf(request))
 
-    return render_to_response('profile.html', c)
+    return render_to_response('profile.html', c,  context_instance=RequestContext(request))
 
 
 

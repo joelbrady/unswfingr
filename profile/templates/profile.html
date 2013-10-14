@@ -26,11 +26,11 @@
       color: #333;
     }
 
-    .section, .item {
+    .section, .course {
       padding: 0px 15px;
     }
 
-    .item {
+    .course {
       background-color: #dcf0f7;
       border: 1px solid #ddd;
       margin-bottom: 4px;
@@ -63,14 +63,14 @@
         if (el.name) el.name = el.name.replace(id_regex, replacement);
       }
 
-      function deleteForm(btn, prefix) {
+      function deleteForm(btn, prefix, class_name) {
         var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
         if (formCount > 1) {
           // Delete the item/form
-          $(btn).parents('.item').remove();
+          $(btn).parents(class_name).remove();
 
-          var forms = $('.item'); // Get all the forms
+          var forms = $(class_name); // Get all the forms
 
           // Update the total number of forms (1 less than before)
           $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
@@ -91,15 +91,44 @@
       }
 
 
-      function addForm(btn, prefix) {
+      function addForm(btn, prefix, class_name) {
         var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+
 
         // You can only have a maximum of 10 courses
         if (formCount < 10) {
+
+           // This block is required because when cloning the first element ,if it has multiple lectures it will clone those to.
           // Clone a form (without event handlers) from the first form
-          var row = $(".item:first").clone(false).get(0);
+          var clean = $(class_name + ":first").clone(false);
+          if(prefix == 'course'){
+              // Cloned the first item and it had more than one lecture block.
+              if(clean.find(".lecture").length > 1){
+                clean.find(".lecture").slice(1).remove();
+              }
+
+              // Cloned the first item and it had more than one tutorial block.
+              if(clean.find(".tutorial").length > 1){
+                clean.find(".tutorial").slice(1).remove();
+              }
+
+              // Cloned the first item and it had more than one lab block.
+              if(clean.find(".laboratory").length > 1){
+                clean.find(".laboratory").slice(1).remove();
+              }
+          }
+          var row = clean; //$(class_name).clone(false);
+
           // Insert it after the last form
-          $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+          if(prefix == 'lecture'){
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".lecture").last()).slideDown(300);
+          }else if(prefix == 'tutorial'){
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".tutorial").last()).slideDown(300);
+          }else if(prefix == 'laboratory'){
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".laboratory").last()).slideDown(300);
+          } else {
+            $(row).removeAttr('id').hide().insertAfter(class_name + ":last").slideDown(300);
+          }
 
           // Remove the bits we don't want in the new row/form
           // e.g. error messages
@@ -113,28 +142,58 @@
               $(this).val('');
           });
 
-          // Add an event handler for the delete item/form link
-          $(row).find('.delete').click(function() {
-            return deleteForm(this, prefix);
-          });
+          if(prefix == 'course'){
+              // Add an event handler for the delete item/form link
+              $(row).find('.delete').click(function() {
+                return deleteForm(this, prefix, class_name);
+              });
+
+              //Link add lecture to this form.
+              $(row).find('.lec').click(function() {
+                return addForm(this, 'lecture', '.lecture');
+              });
+
+              //Link add tutes to this form.
+              $(row).find('.tut').click(function() {
+                return addForm(this, 'tutorial', '.tutorial');
+              });
+
+              //Link add labs to this form.
+              $(row).find('.lab').click(function() {
+                return addForm(this, 'laboratory', '.laboratory');
+              });
+          }
 
           // Update the total form count
           $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
 
+
         } // End if
         else {
-          alert("You're enrolled in to many courses, this app is not for you.");
+          alert("You're enrolled in to many courses, this app is probably not for you.");
         }
         return false;
       }
 
       // Register the click event handlers
       $("#add").click(function() {
-        return addForm(this, 'form');
+        return addForm(this, 'course', ".course");
+      });
+
+       $(".lec").click(function() {
+        return addForm(this, 'lecture', '.lecture');
+      });
+
+      $(".tut").click(function() {
+        return addForm(this, 'tutorial', '.tutorial');
+      });
+
+      $(".lab").click(function() {
+        return addForm(this, 'laboratory', '.laboratory');
       });
 
       $(".delete").click(function() {
-        return deleteForm(this, 'form');
+        return deleteForm(this, 'form', '.course');
       });
 
 
@@ -152,20 +211,61 @@
         <h2>Courses</h2>
         {{ course_formset.management_form }}
         {% for courses in course_formset.forms %}
-            {% for lectures in lecture_formset.forms %}
-                {% for daytimes in day_time_formset.forms %}
-                    <div class="item">
-                        {{ courses.as_p }}
+
+            <div class="course">
+                <!--<input id="course_loop" type="hidden" value="">-->
+                {{ courses.as_p }}
+
+                {{ lecture_formset.management_form }}
+                {% for lectures in lecture_formset.forms %}
+                    {{ day_time_formset.management_form }}
+                    {% for daytimes in day_time_formset.forms %}
                         <p><center> Enter lecture time</center> </p>
+                        <div class="lecture">
                         {{ lectures.as_p }}
                         {{ daytimes.as_p }}
+                        </div>
+                        <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
+                        <p style=""><a class="lec" href="#">Add another Lecture</a></p>
 
-                      <p style=""><a class="delete" href="#">Delete</a></p>
-                    </div>
+
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-        {% endfor %}
-        <p><a id="add" href="#">Add another item</a></p>
+
+                {{ tutorial_formset.management_form }}
+                {% for tutorials in tutorial_formset.forms %}
+                    {{ day_time_formset.management_form }}
+                    {% for daytimes in day_time_formset.forms %}
+                        <p><center> Enter tutorial time</center> </p>
+                        <div class="tutorial">
+                        {{ tutorials.as_p }}
+                        {{ daytimes.as_p }}
+                        </div>
+                        <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
+                        <p style=""><a class="tut" href="#">Add another Tutorial</a></p>
+
+                    {% endfor %}
+                {% endfor %}
+
+                {{ laboratory_formset.management_form }}
+                {% for laboratories in laboratory_formset.forms %}
+                    {{ day_time_formset.management_form }}
+                    {% for daytimes in day_time_formset.forms %}
+                        <p><center> Enter lab time</center> </p>
+                        <div class="laboratory">
+                        {{ laboratories.as_p }}
+                        {{ daytimes.as_p }}
+                        </div>
+                        <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
+                        <p style=""><a class="lab" href="#">Add another lab</a></p>
+
+                    {% endfor %}
+                {% endfor %}
+
+                <p style=""><a class="delete" href="#">Delete Course</a></p>
+            </div>
+    {% endfor %}
+        <p><a id="add" href="#">Add another Course</a></p>
         <input type="submit" value=" Submit " />
     </form>
     </body>
