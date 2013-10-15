@@ -19,6 +19,8 @@ def index(request):
             for form in self.forms:
                 form.empty_permitted = False
 
+
+
     CourseFormSet = formset_factory(CourseForm, max_num=10, formset=RequiredFormSet)
     LectureFormSet = formset_factory(LectureForm, max_num=10, formset=RequiredFormSet)
     TutorialFormSet = formset_factory(TutorialForm, max_num=10, formset=RequiredFormSet)
@@ -26,17 +28,21 @@ def index(request):
     DayTimeFormSet = formset_factory(DayTimesForm,max_num=10, formset=RequiredFormSet)
 
     if request.method == 'POST': # If the form has been submitted...
-        course_form = CourseForm(request.POST) # A form bound to the POST data
+        profile_form = ProfileForm(request.POST) # A form bound to the POST data
         # Create a formset from the submitted data
-        course_formset = CourseFormSet(request.POST, request.FILES)
+        course_formset = CourseFormSet(request.POST, request.FILES, prefix='course')
 
-        if course_form.is_valid() and course_formset.is_valid():
-            courses = course_form.save()
-            #for form in course_formset.forms:
-            #    todo_item = form.save(commit=False)
-            #    todo_item.list = courses
-            #    todo_item.save()
-            return HttpResponse('thanks') # Redirect to a 'success' page
+        if profile_form.is_valid() and course_formset.is_valid():
+            #courses = profile_form.save()
+            for form in course_formset.forms:
+                print form.cleaned_data['course_name']
+                print "test"
+                #todo_item = form.save(commit=False)
+                #todo_item.list = courses
+                #todo_item.save()
+            return HttpResponse(profile_form.cleaned_data['email']) # Redirect to a 'success' page
+        else :
+            return HttpResponse('test')
     else:
         profile_form = ProfileForm()
         course_formset = CourseFormSet(prefix='course')

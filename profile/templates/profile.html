@@ -121,11 +121,11 @@
 
           // Insert it after the last form
           if(prefix == 'lecture'){
-            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".lecture").last()).slideDown(300);
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".lecture").last()).slideDown(0);
           }else if(prefix == 'tutorial'){
-            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".tutorial").last()).slideDown(300);
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".tutorial").last()).slideDown(0);
           }else if(prefix == 'laboratory'){
-            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".laboratory").last()).slideDown(300);
+            $(row).removeAttr('id').hide().insertAfter(  $(btn).parents('.course').find(".laboratory").last()).slideDown(0);
           } else {
             $(row).removeAttr('id').hide().insertAfter(class_name + ":last").slideDown(300);
           }
