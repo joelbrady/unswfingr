@@ -47,8 +47,7 @@ def add_friend(request, target_user_pk):
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
-    else:
-        print "user tried to add themselves"
+    # ignore a user trying to add themselves
     return redirect('main.views.index')
 
 
