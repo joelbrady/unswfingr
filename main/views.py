@@ -54,20 +54,20 @@ def logout(request):
     return redirect('main.views.index')
 
 
-def add_friend(request, something):
+def add_friend(request, target_user_pk):
     """
-    something should be the username that we want to add as a friend
+    target_user_pk should be the primary key of the user that we want to add as a friend
     """
     user = user_to_fingr(request.user)
-    target_user = FingrUser.objects.filter(username=something)[0]
+    target_user = FingrUser.objects.filter(pk=target_user_pk)[0]
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
-
         notify_specific_friend(target_user, user, str(target_user.username) + 'has added you as a friend.')
 
     else:
         print "user tried to add themselves"
+    # ignore a user trying to add themselves
     return redirect('main.views.index')
 
 

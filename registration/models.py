@@ -45,7 +45,7 @@ class FingrUser(models.Model):
 
 def user_to_fingr(django_user):
     """
-    Converts a django auth user to a FingrUser
+    Converts a django auth User object to a FingrUser object
     """
     return FingrUser.objects.filter(django_user=django_user)[0]
 
@@ -55,7 +55,10 @@ def create_fingr_user(email, password, **kwargs):
     This function takes clean data to create a fingr user,
     please do not create one yourself
     """
+
+    # the django create_user method automatically saves it in the database for us
     django_user = User.objects.create_user(username=email, email=email, password=password)
+
     fingr_user = FingrUser(django_user=django_user, username=email, email=email, **kwargs)
     fingr_user.save()
     return fingr_user
