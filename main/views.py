@@ -82,3 +82,7 @@ def friends(request):
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
+
+
+def view_map(request):
+    return render(request, 'map.html')
