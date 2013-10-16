@@ -1,16 +1,29 @@
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm
+from main.middleware import send_message
 from registration.models import FingrUser, user_to_fingr
-
+from django.contrib import messages
 
 def index(request):
     context = {}
+
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
-        context['user'] = user_to_fingr(request.user)
+        user = user_to_fingr(request.user)
+        context['user'] = user
+
     return render(request, 'index.html', context)
+
+
+def notify_all_friends(fingr_user, messageString):
+    # send message to all friends
+    for friend in fingr_user.friends_list:
+        send_message(friend.username, fingr_user.username, messageString)
+
+def notify_specific_friend(fingr_user, fingr_friend, messageString):
+    send_message(fingr_friend.username, fingr_user.username, messageString)
 
 
 def login(request):
@@ -24,6 +37,9 @@ def login(request):
                                 password=form.cleaned_data['password'])
             if user is not None:
                 django_login(request, user)
+                fingr_user = user_to_fingr(request.user)
+                notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
+
                 # redirect to main page
                 return redirect('main.views.index')
     else:
@@ -47,6 +63,9 @@ def add_friend(request, something):
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
+
+        notify_specific_friend(target_user, user, str(target_user.username) + 'has added you as a friend.')
+
     else:
         print "user tried to add themselves"
     return redirect('main.views.index')
@@ -61,7 +80,13 @@ def set_status(request):
             choice = form.cleaned_data['available']
             user = user_to_fingr(request.user)
             if choice == 'ON':
+
+                #only notify them if its actually changed
+                if not user.available:
+                    notify_all_friends(user, 'Your friend ' + str(user.username) + ' is now FREE')
+
                 user.available = True
+
             else:
                 user.available = False
             user.save()

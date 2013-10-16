@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from main.models import Message
 
 
 class FingrUser(models.Model):
@@ -20,6 +21,9 @@ class FingrUser(models.Model):
     available = models.BooleanField(default=False)
 
 
+    messages = models.ManyToManyField(Message)
+
+
     def _get_username(self):
         return self.django_user.username
 
@@ -29,7 +33,11 @@ class FingrUser(models.Model):
     def _friends_list(self):
         return self.friends.all()
 
+    def _messages_list(self):
+        return self.messages.all()
     friends_list = property(_friends_list)
+
+    messages_list = property(_messages_list)
 
     def __unicode__(self):
         return self.username
