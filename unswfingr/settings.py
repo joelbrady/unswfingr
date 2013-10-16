@@ -3,7 +3,7 @@
 #noinspection PyUnresolvedReferences
 from settings_private import *  # this line adds machine specific settings
 
-DEBUG = True
+
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
