@@ -7,7 +7,10 @@
     <link href="{% static "css/starter-template.css"%}" rel="stylesheet">
     <link href="{% static "css/global.css"%}" rel="stylesheet">
 
+    <link href="{% static "js/jGrowl/jquery.jgrowl.css"%}" rel="stylesheet">
     <title>unswFingr - {% block title %}{% endblock %}</title>
+
+
 </head>
 <body>
 {% include "header.html" %}
@@ -24,5 +27,17 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static "js/jquery.js"%}"></script>
     <script src="{% static "js/bootstrap.min.js"%}"></script>
+
+    <script src="{% static "js/jGrowl/jquery.jgrowl.js"%}"></script>
+{% if messages %}
+    <script>
+
+    {% for message in messages %}
+    $.jGrowl("{{message}}!", { position : "top-right", theme: 'test', life: '5000'});
+    {% endfor %}
+    </script>
+
+{% endif %}
+
 </body>
 </html>
