@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
+from django.http import HttpRequest
 from django.shortcuts import render, redirect
-from main.forms import LoginForm, StatusForm
+from main.forms import LoginForm, StatusForm, MessageForm
 from main.middleware import send_message
 from registration.models import FingrUser, user_to_fingr
 from django.contrib import messages
@@ -46,6 +47,34 @@ def login(request):
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+def message(request, send_to_user):
+    form = MessageForm()
+    print (request.get_full_path(), send_to_user)
+
+    if request.user.is_authenticated():
+        user = user_to_fingr(request.user)
+        if send_to_user in user.friends_list.username:
+            print ('person you are messaging is friends with you')
+        else:
+            print ('not friends with user')
+
+
+        if request.POST:
+            form = MessageForm(request.POST)
+            if form.is_valid():
+                pass
+            else:
+                return redirect('main.views.message')
+    else :
+        return redirect('main.views.login')
+
+
+
+
+
+    return render(request, 'message.html', {'form': form})
+
 
 
 def logout(request):
@@ -108,3 +137,4 @@ def friends(request):
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
+
