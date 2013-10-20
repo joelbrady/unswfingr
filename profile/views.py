@@ -31,12 +31,17 @@ def index(request):
         profile_form = ProfileForm(request.POST) # A form bound to the POST data
         # Create a formset from the submitted data
         course_formset = CourseFormSet(request.POST, request.FILES, prefix='course')
+        lecture_formset = LectureFormSet(request.POST, request.FILES, prefix='lecture')
 
-        if profile_form.is_valid() and course_formset.is_valid():
+        if profile_form.is_valid() and course_formset.is_valid() and lecture_formset.is_valid():
             #courses = profile_form.save()
             for form in course_formset.forms:
                 print form.cleaned_data['course_name']
-                print "test"
+
+            for lec_form in lecture_formset.forms:
+                 print lec_form.cleaned_data['lecture_name']
+                 print "test"
+
                 #todo_item = form.save(commit=False)
                 #todo_item.list = courses
                 #todo_item.save()
@@ -65,49 +70,49 @@ def index(request):
     return render_to_response('profile.html', c,  context_instance=RequestContext(request))
 
 
-
-def edit_profile(request):
-    if request.method == "POST":
-
-        profile_form = ProfileForm( request.POST, request.FILES)
-        course_form = CourseForm(request.POST, request.FILES)
-        lecture_form = LectureForm(request.POST, request.FILES)
-        day_times_form = DayTimesForm(request.POST, request.FILES)
-        tutorial_form = TutorialForm(request.POST, request.FILES)
-        lab_form = LabForm(request.POST, request.FILES)
-
-        if profile_form.is_valid() and course_form.is_valid() and lecture_form.is_valid() and day_times_form.is_valid() and tutorial_form.is_valid() and lab_form.is_valid():
-            profile_form.save()
-            course_form.save()
-            lecture_form.save()
-            day_times_form.save()
-            tutorial_form.save()
-            lab_form.save()
-            # Do something. Should generally end with a redirect. For example:
-            return  HttpResponse('Your profile has been updated')
-        else:
-            print profile_form.errors
-            print course_form.errors
-            print lecture_form.errors
-            print day_times_form.errors
-            print tutorial_form.errors
-            print lab_form.errors
-
-    else:
-        profile_form = ProfileForm()
-        course_form = CourseForm()
-        lecture_form = LectureForm()
-        day_times_form = DayTimesForm()
-        tutorial_form = TutorialForm()
-        lab_form = LabForm()
-
-    return render_to_response('profile.html', {
-    'profile_form': profile_form,
-    'course_form': course_form,
-    'lecture_form': lecture_form,
-    'day_times_form': day_times_form,
-    'tutorial_form' : tutorial_form,
-    'lab_form' : lab_form}, context_instance = RequestContext(request))
+#
+#def edit_profile(request):
+#    if request.method == "POST":
+#
+#        profile_form = ProfileForm( request.POST, request.FILES)
+#        course_form = CourseForm(request.POST, request.FILES)
+#        lecture_form = LectureForm(request.POST, request.FILES)
+#        day_times_form = DayTimesForm(request.POST, request.FILES)
+#        tutorial_form = TutorialForm(request.POST, request.FILES)
+#        lab_form = LabForm(request.POST, request.FILES)
+#
+#        if profile_form.is_valid() and course_form.is_valid() and lecture_form.is_valid() and day_times_form.is_valid() and tutorial_form.is_valid() and lab_form.is_valid():
+#            profile_form.save()
+#            course_form.save()
+#            lecture_form.save()
+#            day_times_form.save()
+#            tutorial_form.save()
+#            lab_form.save()
+#            # Do something. Should generally end with a redirect. For example:
+#            return  HttpResponse('Your profile has been updated')
+#        else:
+#            print profile_form.errors
+#            print course_form.errors
+#            print lecture_form.errors
+#            print day_times_form.errors
+#            print tutorial_form.errors
+#            print lab_form.errors
+#
+#    else:
+#        profile_form = ProfileForm()
+#        course_form = CourseForm()
+#        lecture_form = LectureForm()
+#        day_times_form = DayTimesForm()
+#        tutorial_form = TutorialForm()
+#        lab_form = LabForm()
+#
+#    return render_to_response('profile.html', {
+#    'profile_form': profile_form,
+#    'course_form': course_form,
+#    'lecture_form': lecture_form,
+#    'day_times_form': day_times_form,
+#    'tutorial_form' : tutorial_form,
+#    'lab_form' : lab_form}, context_instance = RequestContext(request))
 
 def edit_course(request):
     return render_to_response('profile_course.html', context_instance = RequestContext(request))
