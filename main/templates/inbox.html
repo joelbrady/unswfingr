@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Inbox{% endblock %}
+{% block content %}
+    {% if conversations %}
+        You have conversations with: <br />
+    {% for conversation in conversations %}
+        <a href="{% url 'main.views.message' conversation.pk %}">{{ conversation.username }}</a>
+    {% endfor %}
+    {% else %}
+        No conversations
+    {% endif %}
+
+{% endblock %}

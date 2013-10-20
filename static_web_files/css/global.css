@@ -1,11 +1,34 @@
 body {
-        padding-top: 0px;
+padding-top: 0px;
 }
 
 .body-content {
 }
 
 .navbar-static-top {
- margin-bottom: 19px;
+margin-bottom: 19px;
+
+}
+
+.highlight {
+  padding: 9px 30px;
+  margin-bottom: 10px;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 4px;
+  position:relative;
+
+}
+
+.highlight-left {
+    text-align: left;
+        background-color: #dcf0c8;
+    border-right: 10px solid #93c662;
+}
+
+.highlight-right {
+    border-left: 10px solid #7b93b1;
+        width:auto;
+
 
 }
