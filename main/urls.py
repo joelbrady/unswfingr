@@ -8,4 +8,6 @@ urlpatterns = patterns('',
     url(r'^add_friend/([^/]+)/?$', views.add_friend),
     url(r'^status$', views.set_status),
     url(r'^friends$', views.friends),
+    url(r'^search$', views.search),
+    url(r'^activate$', views.activate),
 )

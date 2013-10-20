@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.shortcuts import render, redirect
-from main.forms import LoginForm, StatusForm
+from main.forms import LoginForm, StatusForm, SearchForm, ActivateForm
 from registration.models import FingrUser, user_to_fingr
 
 
@@ -8,8 +8,10 @@ def index(request):
     context = {}
     if request.user.is_authenticated():
         context['authenticated'] = True
+        form = SearchForm()
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
+            
     return render(request, 'index.html', context)
 
 
@@ -24,8 +26,14 @@ def login(request):
                                 password=form.cleaned_data['password'])
             if user is not None:
                 django_login(request, user)
-                # redirect to main page
-                return redirect('main.views.index')
+                if user_to_fingr(user).verified:
+                    # redirect to main page
+                    return redirect('main.views.index')
+                else:
+                    print("unverified")
+                    django_logout(request)
+                    #redirect to index page
+                    return redirect('main.views.index')
     else:
         form = LoginForm()
 
@@ -82,3 +90,40 @@ def friends(request):
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
+    
+
+def search(request):
+    context = {}
+    if request.user.is_authenticated():
+        context['authenticated'] = True
+        context['user'] = user_to_fingr(request.user)
+        # user is already searching
+        if request.POST:
+            form = SearchForm(request.POST)
+            # display found users
+            if form.is_valid():
+                context['userlist'] = FingrUser.objects.filter(username__contains = form.cleaned_data['search'])
+                return render(request, 'search.html', context)
+            else:
+                return render(request, 'search.html', context)
+        else:
+            context['userlist'] = FingrUser.objects.all()
+            context['user'] = user_to_fingr(request.user)
+            form = SearchForm()
+            return render(request, 'search.html', context)
+    return redirect('main.views.index')
+
+    
+def activate(request):
+    context = {}
+    fuser = FingrUser.objects.filter(username=request.GET.get('user', 'test@test.com'))[0]
+    if fuser is not None:
+        vcode = request.GET.get('code', '')
+        if (fuser.v_code == vcode):
+            fuser.verified = True
+            fuser.save()
+            print("activated")
+        return render(request, 'activate.html', context)
+    else:
+		return redirect('main.views.index')
+    

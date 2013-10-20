@@ -111,4 +111,3 @@ def edit_profile(request):
 
 def edit_course(request):
     return render_to_response('profile_course.html', context_instance = RequestContext(request))
-

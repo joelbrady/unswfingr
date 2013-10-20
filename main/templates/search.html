@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+        <form class="form-horizontal" method="post" action="">
+
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+                <div class="col-lg-10">
+                        {{ field }}
+
+                </div>
+                <span class="text-danger">{{ field.errors }}</span>
+            </div>
+
+            {% endfor %}
+            
+            <div class="form-group">
+                <label for="Search" class="col-lg-2 control-label">Search</label>
+
+                <div class="col-lg-10">
+                        <input class="form-control" id="id_search" maxlength="30" name="search" type="text" />
+
+                </div>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+
+                    <button class="btn btn-primary" type="submit">Search</button><br>
+
+                </div>
+            </div>
+            
+            Found Users:<br>
+            {% for user in userlist %}
+            User: <a href="{% url 'main.views.add_friend' user.pk %}">{{ user.username }}</a><br>
+            {% endfor %}
+    
+        </form>
+{% endblock %}

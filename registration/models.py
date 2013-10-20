@@ -16,6 +16,8 @@ class FingrUser(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     friends = models.ManyToManyField('self')
+    verified = models.BooleanField(default=False)
+    v_code = models.CharField(max_length=50)
 
     available = models.BooleanField(default=False)
 
@@ -33,6 +35,12 @@ class FingrUser(models.Model):
 
     def __unicode__(self):
         return self.username
+        
+    def _get_v_code(self):
+        return self.v_code
+        
+    def _verify(self):
+        self.verified = True
 
 
 def user_to_fingr(django_user):

@@ -13,5 +13,12 @@ class StatusForm(forms.Form):
     available = forms.ChoiceField(choices=STATUS_CHOICES)
 
     #amount = forms.IntegerField(min_value=5, max_value=120)
+    
+
+class SearchForm(forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=MAXIMUM_PASSWORD_LENGTH)
+    
+class ActivateForm(forms.Form):
+    activate = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=MAXIMUM_PASSWORD_LENGTH)
 
 
