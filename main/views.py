@@ -138,3 +138,6 @@ def friends(request):
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
 
+
+def view_map(request):
+    return render(request, 'map.html')
