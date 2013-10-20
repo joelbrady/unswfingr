@@ -15,9 +15,6 @@ urlpatterns = patterns('',
     # new user registration
     url(r'^registration/', include('registration.urls')),
 
-    # example pages
-    url(r'^ex/', include('ex.urls')),
-
     #profile page
     url(r'^profile/', include('profile.urls')),
 
