@@ -4,13 +4,9 @@ from django.contrib.auth import authenticate, login as django_login, logout as d
 from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
-from main.forms import LoginForm, StatusForm, SearchForm, ActivateForm
-=======
-from main.forms import LoginForm, StatusForm, MessageForm
+from main.forms import LoginForm, StatusForm, MessageForm, ActivateForm
 from main.middleware import send_message
 from main.models import Message
->>>>>>> dd1ea724a30bc9ee0c6280ba9d3c26e11afab538
 from registration.models import FingrUser, user_to_fingr
 from django.contrib import messages
 
@@ -19,16 +15,10 @@ def index(request):
 
     if request.user.is_authenticated():
         context['authenticated'] = True
-        form = SearchForm()
         context['userlist'] = FingrUser.objects.all()
-<<<<<<< HEAD
-        context['user'] = user_to_fingr(request.user)
-            
-=======
         user = user_to_fingr(request.user)
         context['user'] = user
-
->>>>>>> dd1ea724a30bc9ee0c6280ba9d3c26e11afab538
+        
     return render(request, 'index.html', context)
 
 
@@ -58,22 +48,18 @@ def login(request):
                                 password=form.cleaned_data['password'])
             if user is not None:
                 django_login(request, user)
-<<<<<<< HEAD
                 if user_to_fingr(user).verified:
+                    notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
                     # redirect to main page
                     return redirect('main.views.index')
                 else:
-                    print("unverified")
                     django_logout(request)
                     #redirect to index page
                     return redirect('main.views.index')
-=======
                 fingr_user = user_to_fingr(request.user)
                 notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
-
                 # redirect to main page
                 return redirect('main.views.index')
->>>>>>> dd1ea724a30bc9ee0c6280ba9d3c26e11afab538
     else:
         form = LoginForm()
 
@@ -216,8 +202,11 @@ def friends(request):
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
-<<<<<<< HEAD
     
+
+def view_map(request):
+    return render(request, 'map.html')
+
 
 def search(request):
     context = {}
@@ -253,11 +242,3 @@ def activate(request):
         return render(request, 'activate.html', context)
     else:
 		return redirect('main.views.index')
-    
-=======
-
-
-def view_map(request):
-    return render(request, 'map.html')
-
->>>>>>> dd1ea724a30bc9ee0c6280ba9d3c26e11afab538

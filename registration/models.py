@@ -47,6 +47,9 @@ class FingrUser(models.Model):
     def _get_v_code(self):
         return self.v_code
         
+    def _set_v_code(self, code):
+        self.v_code = code
+        
     def _verify(self):
         self.verified = True
 

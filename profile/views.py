@@ -131,10 +131,5 @@ def edit_profile(request):
     'tutorial_form' : tutorial_form,
     'lab_form' : lab_form}, context_instance = RequestContext(request))
 
-<<<<<<< HEAD
-def edit_course(request):
-    return render_to_response('profile_course.html', context_instance = RequestContext(request))
-=======
 
 
->>>>>>> dd1ea724a30bc9ee0c6280ba9d3c26e11afab538

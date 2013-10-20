@@ -3,7 +3,6 @@ from profile.models import Profile
 from profile.models import Course
 from profile.models import Lecture, Tutorial, Labs
 from profile.models import Day_Times
-from django import forms
 
 
 
@@ -37,3 +36,4 @@ class LabForm(ModelForm):
 class DayTimesForm(ModelForm):
     class Meta:
         model = Day_Times
+

@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib.auth.hashers import MAXIMUM_PASSWORD_LENGTH
-from django.core.mail import send_mail
 
 
 class RegistrationForm(forms.Form):

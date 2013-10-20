@@ -15,6 +15,9 @@ class StatusForm(forms.Form):
     #amount = forms.IntegerField(min_value=5, max_value=120)
     
 
+class MessageForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}))
+    
 class SearchForm(forms.Form):
     search = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), max_length=MAXIMUM_PASSWORD_LENGTH)
     
