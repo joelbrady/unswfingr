@@ -29,4 +29,4 @@ def verification(email, user):
     link = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(50))
     user._set_v_code(link)
     user.save()
-    #send_mail("UNSWFingr.me Verfication", "http://unswfingr.me/activate.html?user=" + email + "&code=" + link, EMAIL_HOST_USER, [email])
+    send_mail("UNSWFingr.me Verfication", "http://unswfingr.me/activate.html?user=" + email + "&code=" + link, EMAIL_HOST_USER, [email])
