@@ -10,4 +10,7 @@ urlpatterns = patterns('',
     url(r'^friends$', views.friends),
     url(r'^message/(\d+)/?$', views.message),
     url(r'^map$', views.view_map),
+    url(r'^inbox/?$', views.inbox),
+
+
 )

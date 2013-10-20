@@ -1,3 +1,4 @@
+from collections import Set
 from itertools import chain
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.db.models import Q
@@ -24,14 +25,14 @@ def index(request):
 def notify_all_friends(fingr_user, messageString):
     # send message to all friends
     for friend in fingr_user.friends_list:
-        send_message(friend.username, fingr_user.username, messageString, Message.NOTIFICATION)
+        send_message(friend, fingr_user, messageString, Message.NOTIFICATION)
 
-def notify_specific_friend(fingr_user, fingr_friend, messageString):
-    send_message(fingr_friend.username, fingr_user.username, messageString, Message.NOTIFICATION)
+def notify_specific_friend(fingr_user, fingr_friend_pk, messageString):
+    send_message(fingr_friend_pk, fingr_user, messageString, Message.NOTIFICATION)
 
 
-def message_specific_friend(fingr_user, fingr_friend, messageString):
-    send_message(fingr_friend.username, fingr_user.username, messageString,Message.MESSAGE)
+def message_specific_friend(fingr_user, fingr_friend_pk, messageString):
+    send_message(fingr_friend_pk, fingr_user, messageString,Message.MESSAGE)
 
 
 
@@ -74,6 +75,17 @@ def message(request, send_to_user):
         if int(send_to_user) <= FingrUser.objects.count():
             target_user = FingrUser.objects.filter(pk=send_to_user)[0]
 
+            if request.POST:
+                form = MessageForm(request.POST)
+                if form.is_valid():
+                    print 'Message Sent'
+                    context['message_sent'] = True
+                    message_specific_friend(user, target_user, form.cleaned_data['message'])
+                    form = MessageForm()
+
+                else:
+                    return redirect('main.views.message')
+
             if target_user in user.friends_list:
                 pass
             else:
@@ -86,10 +98,7 @@ def message(request, send_to_user):
 
             received = user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).order_by('-time')
             sent = target_user.messages_list.filter(sentFrom=user, type=Message.MESSAGE).order_by('-time')
-
             user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).update(read=True)
-
-
             conversation_history = sorted(chain(sent,received), key=lambda instance: instance.time, reverse=True)
 
             #get the previous messages
@@ -98,22 +107,9 @@ def message(request, send_to_user):
             context['user'] = user
 
 
-            if request.POST:
-                form = MessageForm(request.POST)
-                if form.is_valid():
-                    print 'Message Sent'
-                    context['message_sent'] = True
-                    message_specific_friend(user, target_user, form.cleaned_data['message'])
-                    form = MessageForm()
-
-                else:
-                    return redirect('main.views.message')
         else:
             context['valid'] = False
             context['feedback'] = 'No such user exists'
-
-
-
     else :
         return redirect('main.views.login')
 
@@ -173,6 +169,23 @@ def set_status(request):
         context['form'] = form
 
     return render(request, 'status.html', context)
+
+def inbox(request):
+    context = {}
+    if request.user.is_authenticated():
+            context['authenticated'] = True
+
+            user = user_to_fingr(request.user)
+            conversations = user.messages_list.filter(type=Message.MESSAGE)
+
+            people = set()
+            for conversation in conversations:
+                people.add(conversation.sentFrom)
+
+            context['conversations'] = people
+    else:
+        return redirect('main.views.login')
+    return render(request, 'inbox.html', context)
 
 
 def friends(request):

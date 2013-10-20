@@ -35,7 +35,7 @@ def send_message(messageTo, messageFrom, messageText, typeOfMessage):
 
     In the future we will probably need to add a type of message such as alert, or something like that
     """
-    userTo = FingrUser.objects.filter(username=messageTo)[0]
+    userTo = messageTo
     message = Message(text=messageText, sentFrom=messageFrom, type=typeOfMessage)
     message.save()
     userTo.save()

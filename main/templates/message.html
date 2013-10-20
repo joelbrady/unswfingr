@@ -10,7 +10,7 @@
         <span class="text-muted">Most recent meessages are shown on top.</span>
            {% for message in conversation %}
 
-                {% if message.sentFrom == user.username %}
+                {% if message.sentFrom == user %}
                 <div class="highlight highlight-right">
                 <strong class="text-primary">You</strong><br />
                 {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
