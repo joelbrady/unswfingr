@@ -1,8 +1,11 @@
+from itertools import chain
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
+from django.db.models import Q
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm
 from main.middleware import send_message
+from main.models import Message
 from registration.models import FingrUser, user_to_fingr
 from django.contrib import messages
 
@@ -21,10 +24,16 @@ def index(request):
 def notify_all_friends(fingr_user, messageString):
     # send message to all friends
     for friend in fingr_user.friends_list:
-        send_message(friend.username, fingr_user.username, messageString)
+        send_message(friend.username, fingr_user.username, messageString, Message.NOTIFICATION)
 
 def notify_specific_friend(fingr_user, fingr_friend, messageString):
-    send_message(fingr_friend.username, fingr_user.username, messageString)
+    send_message(fingr_friend.username, fingr_user.username, messageString, Message.NOTIFICATION)
+
+
+def message_specific_friend(fingr_user, fingr_friend, messageString):
+    send_message(fingr_friend.username, fingr_user.username, messageString,Message.MESSAGE)
+
+
 
 
 def login(request):
@@ -51,29 +60,65 @@ def login(request):
 def message(request, send_to_user):
     form = MessageForm()
     print (request.get_full_path(), send_to_user)
+    context = {}
+
+
+    context['valid'] = True
+    context['form'] = form
 
     if request.user.is_authenticated():
         user = user_to_fingr(request.user)
-        if send_to_user in user.friends_list.username:
-            print ('person you are messaging is friends with you')
-        else:
-            print ('not friends with user')
+        context['authenticated'] = True
 
 
-        if request.POST:
-            form = MessageForm(request.POST)
-            if form.is_valid():
+        if int(send_to_user) <= FingrUser.objects.count():
+            target_user = FingrUser.objects.filter(pk=send_to_user)[0]
+
+            if target_user in user.friends_list:
                 pass
             else:
-                return redirect('main.views.message')
+                if target_user == user:
+                    context['feedback'] = 'Wow you must be lonely to send a message to yourself :('
+                    context['valid'] = False
+
+                else:
+                    context['feedback'] = "You are sending a message to someone who isn't your friend. They may not get this message"
+
+            received = user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).order_by('-time')
+            sent = target_user.messages_list.filter(sentFrom=user, type=Message.MESSAGE).order_by('-time')
+
+            user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).update(read=True)
+
+
+            conversation_history = sorted(chain(sent,received), key=lambda instance: instance.time, reverse=True)
+
+            #get the previous messages
+            context['conversation'] = conversation_history[0:5]
+            context['talking_to'] = target_user
+            context['user'] = user
+
+
+            if request.POST:
+                form = MessageForm(request.POST)
+                if form.is_valid():
+                    print 'Message Sent'
+                    context['message_sent'] = True
+                    message_specific_friend(user, target_user, form.cleaned_data['message'])
+                    form = MessageForm()
+
+                else:
+                    return redirect('main.views.message')
+        else:
+            context['valid'] = False
+            context['feedback'] = 'No such user exists'
+
+
+
     else :
         return redirect('main.views.login')
 
 
-
-
-
-    return render(request, 'message.html', {'form': form})
+    return render(request, 'message.html', context)
 
 
 
@@ -141,3 +186,4 @@ def friends(request):
 
 def view_map(request):
     return render(request, 'map.html')
+

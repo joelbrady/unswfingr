@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     url(r'^add_friend/([^/]+)/?$', views.add_friend),
     url(r'^status$', views.set_status),
     url(r'^friends$', views.friends),
-    url(r'^message/([^/]+)/?$', views.message),
+    url(r'^message/(\d+)/?$', views.message),
     url(r'^map$', views.view_map),
 )

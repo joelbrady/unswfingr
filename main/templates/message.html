@@ -1,8 +1,41 @@
 {% extends "base.html" %}
 {% block title %}Message{% endblock %}
 {% block content %}
-       Previous Messages:
 
+{% if valid %}
+        <h3>Conversation with {{talking_to.username}}</h3>
+        <hr />
+        {% if conversation %}
+
+        <span class="text-muted">Most recent meessages are shown on top.</span>
+           {% for message in conversation %}
+
+                {% if message.sentFrom == user.username %}
+                <div class="highlight highlight-right">
+                <strong class="text-primary">You</strong><br />
+                {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
+                </div>
+
+                {% else %}
+                <div class="highlight highlight-left">
+                <strong class="text-primary">{{message.sentFrom}}</strong><br />
+                {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
+                </div>
+
+                {% endif %}
+
+           {% endfor %}
+        {% else %}
+            {% if feedback %}
+            {{ feedback }} <br/>
+            {% endif %}
+            No conversation history.
+        {% endif %}
+        <hr />
+
+        {% if message_sent %}
+            Message Sent.
+        {% endif %}
        <form class="form-horizontal" method="post" action="">
             {% csrf_token %}
             {{ form.non_field_errors }}
@@ -29,4 +62,7 @@
             </div>
 
         </form>
+{% else %}
+        {{ feedback }}
+{% endif %}
 {% endblock %}
