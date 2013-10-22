@@ -1,14 +1,11 @@
-from collections import Set
 from itertools import chain
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
-from django.db.models import Q
-from django.http import HttpRequest
 from django.shortcuts import render, redirect
-from main.forms import LoginForm, StatusForm, MessageForm, ActivateForm
+from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
 from main.middleware import send_message
 from main.models import Message
 from registration.models import FingrUser, user_to_fingr
-from django.contrib import messages
+
 
 def index(request):
     context = {}
@@ -22,19 +19,18 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def notify_all_friends(fingr_user, messageString):
+def notify_all_friends(fingr_user, message_string):
     # send message to all friends
     for friend in fingr_user.friends_list:
-        send_message(friend, fingr_user, messageString, Message.NOTIFICATION)
-
-def notify_specific_friend(fingr_user, fingr_friend_pk, messageString):
-    send_message(fingr_friend_pk, fingr_user, messageString, Message.NOTIFICATION)
+        send_message(friend, fingr_user, message_string, Message.NOTIFICATION)
 
 
-def message_specific_friend(fingr_user, fingr_friend_pk, messageString):
-    send_message(fingr_friend_pk, fingr_user, messageString,Message.MESSAGE)
+def notify_specific_friend(fingr_user, fingr_friend_pk, message_string):
+    send_message(fingr_friend_pk, fingr_user, message_string, Message.NOTIFICATION)
 
 
+def message_specific_friend(fingr_user, fingr_friend_pk, message_string):
+    send_message(fingr_friend_pk, fingr_user, message_string, Message.MESSAGE)
 
 
 def login(request):
@@ -48,6 +44,8 @@ def login(request):
                                 password=form.cleaned_data['password'])
             if user is not None:
                 django_login(request, user)
+                fingr_user = user_to_fingr(request.user)
+                notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
                 if user_to_fingr(user).verified:
                     notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
                     # redirect to main page
@@ -56,29 +54,20 @@ def login(request):
                     django_logout(request)
                     #redirect to index page
                     return redirect('main.views.index')
-                fingr_user = user_to_fingr(request.user)
-                notify_all_friends(fingr_user, 'Your friend ' + str(fingr_user.username) + ' has signed in')
-                # redirect to main page
-                return redirect('main.views.index')
     else:
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
 
+
 def message(request, send_to_user):
     form = MessageForm()
     print (request.get_full_path(), send_to_user)
-    context = {}
-
-
-    context['valid'] = True
-    context['form'] = form
+    context = {'valid': True, 'form': form}
 
     if request.user.is_authenticated():
         user = user_to_fingr(request.user)
         context['authenticated'] = True
-
-
         if int(send_to_user) <= FingrUser.objects.count():
             target_user = FingrUser.objects.filter(pk=send_to_user)[0]
 
@@ -88,8 +77,6 @@ def message(request, send_to_user):
                     print 'Message Sent'
                     context['message_sent'] = True
                     message_specific_friend(user, target_user, form.cleaned_data['message'])
-                    form = MessageForm()
-
                 else:
                     return redirect('main.views.message')
 
@@ -106,23 +93,18 @@ def message(request, send_to_user):
             received = user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).order_by('-time')
             sent = target_user.messages_list.filter(sentFrom=user, type=Message.MESSAGE).order_by('-time')
             user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).update(read=True)
-            conversation_history = sorted(chain(sent,received), key=lambda instance: instance.time, reverse=True)
+            conversation_history = sorted(chain(sent, received), key=lambda instance: instance.time, reverse=True)
 
             #get the previous messages
             context['conversation'] = conversation_history[0:5]
             context['talking_to'] = target_user
             context['user'] = user
-
-
         else:
             context['valid'] = False
             context['feedback'] = 'No such user exists'
-    else :
+    else:
         return redirect('main.views.login')
-
-
     return render(request, 'message.html', context)
-
 
 
 def logout(request):
@@ -177,6 +159,7 @@ def set_status(request):
 
     return render(request, 'status.html', context)
 
+
 def inbox(request):
     context = {}
     if request.user.is_authenticated():
@@ -218,14 +201,13 @@ def search(request):
             form = SearchForm(request.POST)
             # display found users
             if form.is_valid():
-                context['userlist'] = FingrUser.objects.filter(username__contains = form.cleaned_data['search'])
+                context['userlist'] = FingrUser.objects.filter(username__contains=form.cleaned_data['search'])
                 return render(request, 'search.html', context)
             else:
                 return render(request, 'search.html', context)
         else:
             context['userlist'] = FingrUser.objects.all()
             context['user'] = user_to_fingr(request.user)
-            form = SearchForm()
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 
@@ -235,10 +217,10 @@ def activate(request):
     fuser = FingrUser.objects.filter(username=request.GET.get('user', 'test@test.com'))[0]
     if fuser is not None:
         vcode = request.GET.get('code', '')
-        if (fuser.v_code == vcode):
-            fuser.verified = True
+        if fuser.v_code == vcode:
+            fuser.verify()
             fuser.save()
             print("activated")
         return render(request, 'activate.html', context)
     else:
-		return redirect('main.views.index')
+        return redirect('main.views.index')

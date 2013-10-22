@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from registration.forms import RegistrationForm
-from registration.models import create_fingr_user, user_to_fingr
+from registration.models import create_fingr_user
 from django.core.mail import send_mail
 import string
 import random
 
+DEFAULT_FROM_ADDRESS = "noreply@unswfingr.me"
 
 
 def register(request):
@@ -27,6 +28,9 @@ def verification(email, user):
      link this string to the user, dont allow them to login until verified
     """
     link = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(50))
-    user._set_v_code(link)
+    user.v_code = link
     user.save()
-    send_mail("UNSWFingr.me Verfication", "http://unswfingr.me/activate.html?user=" + email + "&code=" + link, EMAIL_HOST_USER, [email])
+    send_mail("UNSWFingr.me Verfication",
+              "http://unswfingr.me/activate?user=" + email + "&code=" + link,
+              DEFAULT_FROM_ADDRESS,
+              [email])
