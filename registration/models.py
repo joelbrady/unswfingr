@@ -48,7 +48,13 @@ def user_to_fingr(django_user):
     """
     Converts a django auth User object to a FingrUser object
     """
-    return FingrUser.objects.filter(django_user=django_user)[0]
+    found_users = FingrUser.objects.filter(django_user=django_user)
+    # a django User should map to exactly one FingrUser
+    assert len(found_users) <= 1
+    if len(found_users) == 1:
+        return found_users[0]
+    else:
+        return None
 
 
 def create_fingr_user(email, password, **kwargs):

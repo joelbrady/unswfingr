@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -11,9 +10,9 @@ class Message(models.Model):
 
     MESSAGE = 'M'
     NOTIFICATION = 'N'
-    TYPE_CHOICES =  (   (NOTIFICATION, 'Notification'),
-                (MESSAGE, 'Message'),
-            )
+    TYPE_CHOICES = ((NOTIFICATION, 'Notification'),
+                    (MESSAGE, 'Message'),
+                    )
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default=NOTIFICATION)
 
 

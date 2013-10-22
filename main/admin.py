@@ -1,1 +1,4 @@
-# register any models in main app here
+from django.contrib import admin
+from main.models import Message
+
+admin.site.register(Message)
