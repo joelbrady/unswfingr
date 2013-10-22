@@ -1,0 +1,104 @@
+[
+{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test@test.com", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2013-10-22T14:39:43.659Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$10000$sI0PvJava0uv$k8blD10a20c8lZ+bDN7KZG5AGO4qK96vKPk7V0eD8+E=", 
+        "email": "test@test.com", 
+        "date_joined": "2013-10-22T14:39:43.659Z"
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test2@test.com", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2013-10-22T14:39:51.822Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$10000$sYpzU6FEHvI0$Xbabo2KCKPnrGp7I6p9bOCh28WFj94XNPbyYowFCQ8c=", 
+        "email": "test2@test.com", 
+        "date_joined": "2013-10-22T14:39:51.822Z"
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.user", 
+    "fields": {
+        "username": "test3@test.com", 
+        "first_name": "", 
+        "last_name": "", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2013-10-22T14:40:01.852Z", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "pbkdf2_sha256$10000$pzEfcakAjDgK$7fNIlsrEhsLikgTu73+l/6AaRq5lNOeOjpUVDqSrMU0=", 
+        "email": "test3@test.com", 
+        "date_joined": "2013-10-22T14:40:01.852Z"
+    }
+},
+{
+    "pk": 1, 
+    "model": "registration.fingruser", 
+    "fields": {
+        "username": "test@test.com", 
+        "available": false, 
+        "first_name": "", 
+        "last_name": "", 
+        "verified": true, 
+        "messages": [], 
+        "v_code": "C8NYPX1KVA6SI3OUR54TOPPB6RG4MKFI6ZQVTEBCD8C3DMS867", 
+        "friends": [], 
+        "email": "test@test.com", 
+        "django_user": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "registration.fingruser", 
+    "fields": {
+        "username": "test2@test.com", 
+        "available": false, 
+        "first_name": "", 
+        "last_name": "", 
+        "verified": true, 
+        "messages": [], 
+        "v_code": "ME9FB2NOTS1YSL3TKSQ087W4M542JIHG22INPEJN6VQ0BPXZG1", 
+        "friends": [], 
+        "email": "test2@test.com", 
+        "django_user": 2
+    }
+},
+{
+    "pk": 3, 
+    "model": "registration.fingruser", 
+    "fields": {
+        "username": "test3@test.com", 
+        "available": false, 
+        "first_name": "", 
+        "last_name": "", 
+        "verified": true, 
+        "messages": [], 
+        "v_code": "W3J9WHL27K8Q1JG3W89UMMTAAICG2B7RJS7W29SAHC2EAKQKY1", 
+        "friends": [], 
+        "email": "test3@test.com", 
+        "django_user": 3
+    }
+}
+]
