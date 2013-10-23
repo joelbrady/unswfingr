@@ -6,7 +6,6 @@ from registration.models import user_to_fingr
 class CheckMessagesMiddleware(object):
     @staticmethod
     def process_view(request, view_func, view_args, view_kwargs):
-        print('middleware')
         assert hasattr(request,
                        'user'), 'The UpdateLastActivityMiddleware requires authentication middleware to be installed.'
         if request.user.is_authenticated():
@@ -46,7 +45,6 @@ def send_message(message_to, message_from, message_text, type_of_message):
 
 
 def fingr_user_everywhere(request):
-    print ('context')
     dictionary = {}
     if (request.user):
         if (request.user.is_authenticated()):
