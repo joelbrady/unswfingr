@@ -128,7 +128,7 @@ def add_friend(request, target_user_pk):
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
-        notify_specific_friend(target_user, user, str(target_user.username) + 'has added you as a friend.')
+        notify_specific_friend(target_user, user, str(target_user.username) + ' has added you as a friend.')
 
     else:
         print "user tried to add themselves"
