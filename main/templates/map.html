@@ -22,12 +22,6 @@
             };
             var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
-            var marker = new google.maps.Marker({
-                position: unswLoc,
-                map: map,
-                title: "Hello World!",
-                draggable: true
-            });
             function clickOnMap(event) {
                 console.log("someone clicked @ " + event.latLng);
                 switch(currentMode) {
@@ -36,23 +30,33 @@
                             position: event.latLng,
                             map: map,
                             title: $('#static-marker-name').val(),
-                            draggable: true
+                            draggable: true,
+                            fingrDrag: function(event) {
+                                $.ajax({
+                                    url: {% url 'main.views.update_static_marker' %},
+                                    data: {
+                                        id: this.fingrId,
+                                        lat: event.latLng.lat(),
+                                        lng: event.latLng.lng()
+                                    },
+                                    type: 'POST'
+                                });
+                            }
                         });
-                        google.maps.event.addDomListener(staticMarker, 'dragend', function(event) {
-                            var marker = staticMarker;
-                            console.log("marker " + marker.title + " finished dragging");
-                        });
+                        google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
                         // we want to send to the server the name and latLng of our static marker to
                         // save for next visit/friends to see
                         $.ajax({
                             url: "{% url 'main.views.new_static_marker' %}",
                             data: {
-                                name: marker.title,
-                                lat: marker.position.lat(),
-                                lng: marker.position.lng()
-                            }
+                                name: staticMarker.title,
+                                lat: staticMarker.position.lat(),
+                                lng: staticMarker.position.lng()
+                            },
+                            type: 'POST'
                         }).done(function(response) {
-                            console.log("%O", response);
+                            var r = JSON.parse(response);
+                            staticMarker.fingrId = r.id;
                         });
                         break;
                     case Modes.EVENT:
@@ -70,7 +74,6 @@
             // the next click on the map will create a new static location marker
             currentMode = Modes.STATIC;
         }
-
     </script>
 {% endblock %}
 

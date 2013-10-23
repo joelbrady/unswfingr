@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
 from main.middleware import send_message
-from main.models import Message
+from main.models import Message, StaticLocation
 from registration.models import FingrUser, user_to_fingr
 
 
@@ -19,7 +19,7 @@ def index(request):
         context['userlist'] = FingrUser.objects.all()
         user = user_to_fingr(request.user)
         context['user'] = user
-        
+
     return render(request, 'index.html', context)
 
 
@@ -226,7 +226,7 @@ def search(request):
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 
-    
+
 def activate(request):
     context = {}
     fuser = FingrUser.objects.filter(username=request.GET.get('user', 'test@test.com'))[0]
@@ -243,19 +243,49 @@ def activate(request):
 
 @login_required
 def new_static_marker(request):
-    name = request.GET.get('name', None)
-    latitude = request.GET.get('lat', None)
-    longitude = request.GET.get('lng', None)
+    name = request.POST.get('name', None)
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+
+    response = {'success': False}
+
     for x in [name, latitude, longitude]:
         if x is None:
-            return HttpResponse("bad data")
+            return HttpResponse(json.dumps(response))
     try:
         latitude = float(latitude)
         longitude = float(longitude)
     except ValueError:
-        return HTTP("bad data")
+        return HttpResponse(json.dumps(response))
 
-    # TODO make new marker model instance, send back primary key
-    # TODO send back json with either sucess: true + id, or success: false
+    loc = StaticLocation(name=name, latitude=latitude, longitude=longitude)
+    loc.save()
 
-    return HttpResponse("OK!")
+    response['id'] = loc.pk
+    response['success'] = True
+
+    return HttpResponse(json.dumps(response))
+
+
+@login_required
+def update_static_marker(request):
+    pk = request.POST.get('id', None)
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+
+    try:
+        pk = int(pk)
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return HttpResponse(json.dumps({'success': False}))
+    static_marker_lookup = StaticLocation.objects.filter(pk=pk)
+    assert len(static_marker_lookup) <= 1
+    if len(static_marker_lookup) == 1:
+        static_marker = static_marker_lookup[0]
+        static_marker.latitude = latitude
+        static_marker.longitude = longitude
+        static_marker.save()
+        return HttpResponse(json.dumps({'success': True}))
+    else:
+        return HttpResponse(json.dumps({'success': False}))
