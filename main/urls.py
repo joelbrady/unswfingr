@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     url(r'^map$', views.view_map),
     url(r'^inbox/?$', views.inbox),
     url(r'^search$', views.search),
-    url(r'^activate$', views.activate),
+    url(r'^activate', views.activate),
 )
