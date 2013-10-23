@@ -10,13 +10,13 @@ from profile.models import Day_Times
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
-        exclude = ('courses',)
+        exclude = ('courses')
 
 
 class CourseForm(ModelForm):
     class Meta:
         model = Course
-        exclude = ('lecture', 'tutorials', 'labs')
+        exclude = ('lectures', 'tutorials', 'labs')
 
 class LectureForm(ModelForm):
     class Meta:

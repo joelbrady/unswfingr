@@ -1,0 +1,71 @@
+<!--<html>-->
+<!--<head>-->
+    <!--<title>unswFingr.me</title>-->
+    <!--&lt;!&ndash; Latest compiled and minified CSS &ndash;&gt;-->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">-->
+
+    <!--&lt;!&ndash; Optional theme &ndash;&gt;-->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<form method = "post" >-->
+    <!--{% csrf_token %}-->
+
+    <!--<table>-->
+        <!--{{ course_form }}-->
+    <!--</table>-->
+
+    <!--<table>-->
+        <!--{{ lecture_form }}-->
+    <!--</table>-->
+    <!--<table>-->
+        <!--{{ day_times_form }}-->
+    <!--</table>-->
+
+    <!--<table>-->
+        <!--{{ tutorial_form }}-->
+    <!--</table>-->
+
+    <!--<table>-->
+        <!--{{ day_times_form }}-->
+    <!--</table>-->
+
+    <!--<table>-->
+        <!--{{ lab_form }}-->
+    <!--</table>-->
+    <!--<table>-->
+        <!--{{ day_times_form }}-->
+    <!--</table>-->
+
+    <!--<input type="submit" value="Submit" />-->
+<!--</form>-->
+<HTML>
+    <HEAD>
+        <TITLE>Add courses</TITLE>
+        <SCRIPT language="javascript">
+            function addCombo() {
+                var textb = document.getElementById("txtCombo");
+                var combo = document.getElementById("combo");
+
+                var option = document.createElement("option");
+                option.text = textb.value;
+                option.value = textb.value;
+                try {
+                    combo.add(option, null); //Standard
+                }catch(error) {
+                    combo.add(option); // IE only
+                }
+                textb.value = "";
+            }
+        </SCRIPT>
+    </HEAD>
+    <BODY style="font-family: sans-serif">
+
+        Add Courses: <input type="text" name="txtCombo" id="txtCombo"/>
+        <input type="button" value="Add" onclick="addCombo()">
+        <br/>
+        Courses: <select name="combo" id="combo"></select> <input type="button" value="Edit Course" onclick=""
+
+    </BODY>
+</HTML>

@@ -67,6 +67,7 @@
         "friends": [], 
         "email": "test@test.com", 
         "django_user": 1
+
     }
 },
 {
@@ -83,6 +84,7 @@
         "friends": [], 
         "email": "test2@test.com", 
         "django_user": 2
+
     }
 },
 {
@@ -99,6 +101,7 @@
         "friends": [], 
         "email": "test3@test.com", 
         "django_user": 3
+
     }
 }
 ]
