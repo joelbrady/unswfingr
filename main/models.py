@@ -4,7 +4,9 @@ from django.db import models
 class Message(models.Model):
     text = models.EmailField(max_length=100)
     time = models.DateTimeField(auto_now_add=True)
-    sentFrom = models.ForeignKey('registration.FingrUser')
+    sentFrom = models.ForeignKey('registration.FingrUser', related_name='sent_from_fingruser')
+    sentTo = models.ForeignKey('registration.FingrUser', related_name='sent_to_fingruser')
+
 
     read = models.BooleanField(default=False)
 

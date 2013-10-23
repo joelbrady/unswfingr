@@ -36,7 +36,7 @@
     <script>
 
     {% for message in messages %}
-    $.jGrowl("{{message}}!", { position : "top-right", theme: 'test', life: '5000'});
+    $.jGrowl("{{message | safe }}!", { position : "top-right", theme: 'test', life: '5000'});
     {% endfor %}
     </script>
 

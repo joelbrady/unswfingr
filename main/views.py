@@ -14,9 +14,7 @@ def index(request):
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
-        user = user_to_fingr(request.user)
-        context['user'] = user
-        
+
     return render(request, 'index.html', context)
 
 
@@ -26,12 +24,10 @@ def notify_all_friends(fingr_user, message_string):
         send_message(friend, fingr_user, message_string, Message.NOTIFICATION)
 
 
-@login_required
 def notify_specific_friend(fingr_user, fingr_friend_pk, message_string):
     send_message(fingr_friend_pk, fingr_user, message_string, Message.NOTIFICATION)
 
 
-@login_required
 def message_specific_friend(fingr_user, fingr_friend_pk, message_string):
     send_message(fingr_friend_pk, fingr_user, message_string, Message.MESSAGE)
 
@@ -94,15 +90,17 @@ def message(request, send_to_user):
                 else:
                     context['feedback'] = "You are sending a message to someone who isn't your friend. They may not get this message"
 
-            received = user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).order_by('-time')
-            sent = target_user.messages_list.filter(sentFrom=user, type=Message.MESSAGE).order_by('-time')
-            user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).update(read=True)
+            received = user.messages_list.filter(sentFrom=target_user,type=Message.MESSAGE).order_by('-time')
+            sent = target_user.messages_list.filter(sentTo=target_user, sentFrom=user, type=Message.MESSAGE).order_by('-time')
+
+            user.messages_list.filter(sentTo=user, type=Message.MESSAGE).update(read=True)
             conversation_history = sorted(chain(sent, received), key=lambda instance: instance.time, reverse=True)
+
+            #conversation_history = received
 
             #get the previous messages
             context['conversation'] = conversation_history[0:5]
             context['talking_to'] = target_user
-            context['user'] = user
         else:
             context['valid'] = False
             context['feedback'] = 'No such user exists'
@@ -160,7 +158,6 @@ def set_status(request):
 
     if request.user.is_authenticated():
         context['authenticated'] = True
-        context['user'] = user_to_fingr(request.user)
         context['form'] = form
 
     return render(request, 'status.html', context)
@@ -175,9 +172,16 @@ def inbox(request):
             user = user_to_fingr(request.user)
             conversations = user.messages_list.filter(type=Message.MESSAGE)
 
+
             people = set()
             for conversation in conversations:
-                people.add(conversation.sentFrom)
+                if conversation.sentFrom != user:
+                    people.add(conversation.sentFrom)
+
+                if conversation.sentTo != user:
+                     people.add(conversation.sentTo)
+
+
 
             context['conversations'] = people
     else:
@@ -191,7 +195,6 @@ def friends(request):
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
-        context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
 
 
@@ -207,7 +210,6 @@ def search(request):
     context = {}
     if request.user.is_authenticated():
         context['authenticated'] = True
-        context['user'] = user_to_fingr(request.user)
         # user is already searching
         if request.POST:
             form = SearchForm(request.POST)
@@ -219,7 +221,6 @@ def search(request):
                 return render(request, 'search.html', context)
         else:
             context['userlist'] = FingrUser.objects.all()
-            context['user'] = user_to_fingr(request.user)
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 
