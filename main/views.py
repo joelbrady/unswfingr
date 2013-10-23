@@ -244,6 +244,9 @@ def activate(request):
 
 @login_required
 def new_static_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
     name = request.POST.get('name', None)
     latitude = request.POST.get('lat', None)
     longitude = request.POST.get('lng', None)
@@ -262,6 +265,9 @@ def new_static_marker(request):
     loc = StaticLocation(name=name, latitude=latitude, longitude=longitude)
     loc.save()
 
+    user = user_to_fingr(request.user)
+    user.static_locations.add(loc)
+
     response['id'] = loc.pk
     response['success'] = True
 
@@ -270,6 +276,9 @@ def new_static_marker(request):
 
 @login_required
 def update_static_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
     pk = request.POST.get('id', None)
     latitude = request.POST.get('lat', None)
     longitude = request.POST.get('lng', None)
@@ -280,6 +289,7 @@ def update_static_marker(request):
         longitude = float(longitude)
     except ValueError:
         return HttpResponse(json.dumps({'success': False}))
+
     static_marker_lookup = StaticLocation.objects.filter(pk=pk)
     assert len(static_marker_lookup) <= 1
     if len(static_marker_lookup) == 1:
@@ -290,3 +300,12 @@ def update_static_marker(request):
         return HttpResponse(json.dumps({'success': True}))
     else:
         return HttpResponse(json.dumps({'success': False}))
+
+
+@login_required
+def get_static_markers(request):
+    user = user_to_fingr(request.user)
+    response = []
+    for loc in user.static_locations.all():
+        response.append(loc.json)
+    return HttpResponse(json.dumps(response))
