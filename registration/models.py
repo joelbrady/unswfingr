@@ -3,6 +3,8 @@ from django.db import models
 from main.models import Message, StaticLocation
 
 
+
+
 class FingrUser(models.Model):
     """
     This is our user class that has our custom info
@@ -22,6 +24,8 @@ class FingrUser(models.Model):
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
     static_locations = models.ManyToManyField(StaticLocation)
+
+
 
     def _get_username(self):
         return self.django_user.username
@@ -69,4 +73,6 @@ def create_fingr_user(email, password, **kwargs):
 
     fingr_user = FingrUser(django_user=django_user, username=email, email=email, **kwargs)
     fingr_user.save()
+
+
     return fingr_user

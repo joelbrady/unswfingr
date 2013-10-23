@@ -8,9 +8,9 @@
 
     {% if authenticated %}
     Welcome to unswFingr.me {{ username }}!<br>
-    user: {{ user }}<br>
+    user: {{ fingr_user }}<br>
     Friends List:<br>
-    {% for friend in user.friends_list %}
+    {% for friend in fingr_user.friends_list %}
     Friend: {{ friend.username }}<br>
     {% endfor %}
     User List:<br>
@@ -23,5 +23,7 @@
     Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
     Click <a href="{% url 'registration.views.register' %}">here</a> to register.
     {% endif %}
+
+
 
 {% endblock %}

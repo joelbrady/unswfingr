@@ -169,56 +169,58 @@
 
                     {{ lecture_formset.management_form }}
                     {% for lectures in lecture_formset.forms %}
-                        {{ day_time_formset.management_form }}
-                        {% for daytimes in day_time_formset.forms %}
+                        <!--{{ day_time_formset.management_form }}-->
+                        <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter lecture time</center> </p>
                             <div class="lecture">
-                            {{ lectures.as_p }}
-                            {{ daytimes.as_p }}
+                                {{ lectures.as_p }}
+                                <!--{{ daytimes.as_p }}-->
                             </div>
                             <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
                             <p style=""><a class="lec" href="#">Add another Lecture</a></p>
 
 
-                        {% endfor %}
+                        <!--{% endfor %}-->
                     {% endfor %}
 
                     {{ tutorial_formset.management_form }}
                     {% for tutorials in tutorial_formset.forms %}
-                        {{ day_time_formset.management_form }}
-                        {% for daytimes in day_time_formset.forms %}
+                        <!--{{ day_time_formset.management_form }}-->
+                        <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter tutorial time</center> </p>
                             <div class="tutorial">
                             {{ tutorials.as_p }}
-                            {{ daytimes.as_p }}
+                            <!--{{ daytimes.as_p }}-->
                             </div>
                             <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
                             <p style=""><a class="tut" href="#">Add another Tutorial</a></p>
 
-                        {% endfor %}
+                        <!--{% endfor %}-->
                     {% endfor %}
 
                     {{ laboratory_formset.management_form }}
                     {% for laboratories in laboratory_formset.forms %}
-                        {{ day_time_formset.management_form }}
-                        {% for daytimes in day_time_formset.forms %}
+                        <!--{{ day_time_formset.management_form }}-->
+                        <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter lab time</center> </p>
                             <div class="laboratory">
                             {{ laboratories.as_p }}
-                            {{ daytimes.as_p }}
+                            <!--{{ daytimes.as_p }}-->
                             </div>
                             <!--<p><a id="lec" href="#">Add another Lecture</a></p>-->
                             <p style=""><a class="lab" href="#">Add another lab</a></p>
 
-                        {% endfor %}
+                        <!--{% endfor %}-->
                     {% endfor %}
 
                     <!--<p style=""><a class="delete" href="#">Delete Course</a></p>-->
                 </div>
         {% endfor %}
-         <button href="edit_courses.html" > Add another Course </button>
+         <button href="add_courses.html" > Add Course </button>
 
-         <button href="done_adding_courses.html" > Done </button>
+
+         <!--<a href="add_courses.html" > Done </a>-->
+         <!--<button href="edit_profile" > Done </button>-->
 
         <!--<input type="submit" id="done" value=" Done " />-->
         </form>

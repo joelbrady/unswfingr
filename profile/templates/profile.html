@@ -1,71 +1,54 @@
-{% extends "base.html" %}
-{% block title %}Edit Profile{% endblock %}
-{% block content %}
+<html>
+<head>
+    <title>unswFingr.me</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+</head>
+<body>
+<!--<form method="post" enctype="multipart/form-data">-->
+    <!--{% csrf_token %}-->
+    <!--{{ form.as_p }}-->
+    <!--{{ lecture_formset.as_p }}-->
+    <!--<input type="submit" value="Submit" />-->
+<!--</form>-->
+<form method = "post" >
+    {% csrf_token %}
+    <table>
+        {{ profile_form }}
+    </table>
+
+    <table>
+        {{ course_form }}
+    </table>
+
+    <table>
+        {{ lecture_form }}
+    </table>
+    <table>
+        {{ day_times_form }}
+    </table>
+
+    <table>
+        {{ tutorial_form }}
+    </table>
+
+    <table>
+        {{ day_times_form }}
+    </table>
+
+    <table>
+        {{ lab_form }}
+    </table>
+    <table>
+        {{ day_times_form }}
+    </table>
+
+    <input type="submit" value="Submit" />
+</form>
 
 
-    <style type="text/css">
-    html {
-      background-color: #ededed;
-    }
-
-    body {
-      font-family: Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      width: 600px;
-      padding: 20px 40px 40px;
-      margin: 0 auto;
-      margin-top: 15px;
-      border: 1px solid #ccc;
-      background-color: #fff;
-    }
-
-    h1 {
-      color: #000;
-    }
-
-    h2 {
-      color: #333;
-    }
-
-    .section, .course {
-      padding: 0px 15px;
-    }
-
-    .course {
-      background-color: #dcf0f7;
-      border: 1px solid #ddd;
-      margin-bottom: 4px;
-      padding: 5px 15px;
-    }
-
-    .helptext {
-      color: #999;
-      padding-left: 10px;
-    }
-
-    a.delete:hover {
-      color: red;
-    }
-    </style>
-
-
-
-
-    </head>
-    <body>
-    <h1> Editing profile</h1>
-    <h2> Profile details </h2>
-    <form action="" method="POST">{% csrf_token %}
-        <div class="section">
-            {{ profile_form.as_p }}
-        </div>
-        <p>
-        <a href="edit_courses.html"> Manually add courses </a>
-        </p>
-        <!--<p><a id="add" href="#">Add another Course</a></p>-->
-        <p>
-        <input type="submit" value=" Submit " />
-        </p>
-    </form>
-    </body>
-{% endblock %}
-
+</body>
+</html>

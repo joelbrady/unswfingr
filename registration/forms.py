@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.hashers import MAXIMUM_PASSWORD_LENGTH
+from django.forms import ModelForm
+from registration.models import FingrUser
 
 
 class RegistrationForm(forms.Form):
@@ -16,3 +18,8 @@ class RegistrationForm(forms.Form):
         if password != password2:
             raise forms.ValidationError('Passwords do not match')
         return password
+
+class FingrUserForm(ModelForm):
+    class Meta:
+        model = FingrUser
+        exclude = ('messages','verified','django_user', 'friends', 'v_code', 'available')

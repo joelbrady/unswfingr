@@ -10,19 +10,23 @@
         <span class="text-muted">Most recent meessages are shown on top.</span>
            {% for message in conversation %}
 
-                {% if message.sentFrom == user %}
+                {% if message.sentFrom == fingr_user %}
                 <div class="highlight highlight-right">
                 <strong class="text-primary">You</strong><br />
                 {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
-                </div>
 
                 {% else %}
                 <div class="highlight highlight-left">
                 <strong class="text-primary">{{message.sentFrom}}</strong><br />
                 {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
-                </div>
 
                 {% endif %}
+               {% if message.read and message.sentFrom == fingr_user %}
+                    <span class="glyphicon glyphicon-ok text-muted"> </span>
+                    <span class="text-muted"> Message read.</span>
+                {% endif %}
+               </div>
+
 
            {% endfor %}
         {% else %}

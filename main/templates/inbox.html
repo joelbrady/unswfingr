@@ -4,7 +4,7 @@
     {% if conversations %}
         You have conversations with: <br />
     {% for conversation in conversations %}
-        <a href="{% url 'main.views.message' conversation.pk %}">{{ conversation.username }}</a>
+        <a href="{% url 'main.views.message' conversation.pk %}">{{ conversation.username }}</a><br/>
     {% endfor %}
     {% else %}
         No conversations

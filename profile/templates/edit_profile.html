@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+
+    </head>
+    <body>
+    <h1> Editing profile</h1>
+    <h2> Profile details </h2>
+    <form action="" method="POST">{% csrf_token %}
+        <div class="section">
+            {{ profile_form.as_p }}
+        </div>
+        <p>
+        <a href="edit_courses.html"> Manually add courses </a>
+        </p>
+        <!--<p><a id="add" href="#">Add another Course</a></p>-->
+        <p>
+        <input type="submit" value=" Submit " />
+        </p>
+    </form>
+    </body>
+{% endblock %}
+

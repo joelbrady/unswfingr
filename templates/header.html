@@ -6,13 +6,21 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">unswFingr.me</a>
+
+            {% if fingr_user %}
+                        <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.username}}</a>
+
+            {% else %}
+                        <a class="navbar-brand" href="#">unswFingr.me</a>
+
+            {% endif %}
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home <span class="glyphicon glyphicon-home" /></a></li>
 
-                {% if authenticated %}
+                {% if user.is_authenticated %}
+
                 <li><a href="{% url 'main.views.logout' %}">Log out <span class="glyphicon glyphicon-off" /></a></li>
                 <li><a href="{% url 'main.views.set_status' %}">Update Availability <span class="glyphicon glyphicon-time" /></a></li>
                <li><a href="{% url 'profile.views.edit_profile' %}">Update Profile <span class="glyphicon glyphicon-user" /></a></li>
@@ -20,7 +28,10 @@
                 <li><a href="{% url 'main.views.friends' %}">Friends <span class="glyphicon glyphicon-user" /></a></li>
 
                 <li><a href="{% url 'main.views.search' %}">Search <span class="glyphicon glyphicon-user" /></a></li>
-                <li><a href="{% url 'main.views.inbox' %}">Inbox <span class="glyphicon glyphicon-comment" /></a></li>
+
+
+                <li><a href="{% url 'main.views.inbox' %}">Inbox <span class="glyphicon glyphicon-envelope {%if newMessage %}glyphicon-red{% endif %}" /></a></li>
+                <li><a href="{% url 'main.views.view_map' %}">Map <span class="glyphicon glyphicon-map-marker" /></a></li>
 
                 {% else %}
                 <li><a href="{% url 'main.views.login' %}">Login <span class="glyphicon glyphicon-arrow-down" /></a></li>
