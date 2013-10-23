@@ -19,7 +19,7 @@ class FingrUser(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     friends = models.ManyToManyField('self')
-    verified = models.BooleanField(default=True)
+    verified = models.BooleanField(default=False)
     v_code = models.CharField(max_length=50)
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
