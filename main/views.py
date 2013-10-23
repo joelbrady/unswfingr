@@ -294,18 +294,24 @@ def update_static_marker(request):
     assert len(static_marker_lookup) <= 1
     if len(static_marker_lookup) == 1:
         static_marker = static_marker_lookup[0]
-        static_marker.latitude = latitude
-        static_marker.longitude = longitude
-        static_marker.save()
-        return HttpResponse(json.dumps({'success': True}))
-    else:
-        return HttpResponse(json.dumps({'success': False}))
+        user = user_to_fingr(request.user)
+        if user.static_locations.filter(pk=static_marker.pk).count() > 0:
+            static_marker.latitude = latitude
+            static_marker.longitude = longitude
+            static_marker.save()
+            return HttpResponse(json.dumps({'success': True}))
+    return HttpResponse(json.dumps({'success': False}))
 
 
 @login_required
 def get_static_markers(request):
     user = user_to_fingr(request.user)
     response = []
+    # get users' own markers
     for loc in user.static_locations.all():
         response.append(loc.json)
+    # get all friends markers
+    for friend in user.friends.all():
+        for marker in friend.static_locations.all():
+            response.append(marker.json)
     return HttpResponse(json.dumps(response))

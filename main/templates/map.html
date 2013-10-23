@@ -4,6 +4,30 @@
     Map
 {% endblock %}
 
+{% block content %}
+    <div id="map-canvas" style="width: 100%; height: 500px;"></div>
+    <div id="map-buttons">
+        Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
+        <input id="static-marker-name" type="text"><br>
+        <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
+    </div>
+    <div id="user-static-markers" style="display: inline-block;">
+        <h3>My Locations:</h3>
+        {% for marker in fingr_user.static_locations.all %}
+            {{ marker.name }}<br>
+        {% endfor %}
+    </div>
+    <div id="friends-static-markers" style="display: inline-block; padding-left: 100px;">
+        <h3>Friends' Markers:</h3>
+        {% for friend in fingr_user.friends.all %}
+            <h4>{{ friend.email }}</h4>
+            {% for marker in friend.static_locations.all %}
+                {{ marker.name }}<br>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
 {% block extra-scripts %}
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkkdD2uhSw13bqvoIeKQaX_zp4MqIsUfQ&sensor=false"></script>
     <script type="text/javascript">
@@ -62,6 +86,7 @@
         var unswLoc = new google.maps.LatLng(-33.917473, 151.23103);
 
         var map;
+        var markers = [];
 
         function initialize() {
             var mapOptions = {
@@ -105,6 +130,9 @@
                         });
                 console.log("new marker %O", staticMarker);
                 google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
+                if (staticMarker.fingrId !== undefined) {
+                    markers[staticMarker.fingrId] = staticMarker;
+                }
                 return staticMarker;
             }
 
@@ -148,13 +176,4 @@
             currentMode = Modes.STATIC;
         }
     </script>
-{% endblock %}
-
-{% block content %}
-    <div id="map-canvas" style="width: 100%; height: 500px;"></div>
-    <div id="map-buttons">
-        Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
-        <input id="static-marker-name" type="text"><br>
-        <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
-    </div>
 {% endblock %}
