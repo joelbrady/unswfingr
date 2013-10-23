@@ -16,3 +16,7 @@ class Message(models.Model):
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default=NOTIFICATION)
 
 
+class StaticLocation(models.Model):
+    name = models.TextField(max_length=50)
+    latitude = models.FloatField()
+    longitude = models.FloatField()

@@ -1,6 +1,9 @@
+from httplib import HTTP
 from itertools import chain
+import json
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
 from main.middleware import send_message
@@ -236,3 +239,23 @@ def activate(request):
         return render(request, 'activate.html', context)
     else:
         return redirect('main.views.index')
+
+
+@login_required
+def new_static_marker(request):
+    name = request.GET.get('name', None)
+    latitude = request.GET.get('lat', None)
+    longitude = request.GET.get('lng', None)
+    for x in [name, latitude, longitude]:
+        if x is None:
+            return HttpResponse("bad data")
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return HTTP("bad data")
+
+    # TODO make new marker model instance, send back primary key
+    # TODO send back json with either sucess: true + id, or success: false
+
+    return HttpResponse("OK!")
