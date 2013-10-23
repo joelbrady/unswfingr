@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from main.models import Message
+from profile.models import Profile
 
 
 class FingrUser(models.Model):
@@ -21,6 +22,7 @@ class FingrUser(models.Model):
     v_code = models.CharField(max_length=50)
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
+    profile = models.OneToOneField(Profile)
 
     def _get_username(self):
         return self.django_user.username
