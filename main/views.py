@@ -1,5 +1,6 @@
 from itertools import chain
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
 from main.middleware import send_message
@@ -25,10 +26,12 @@ def notify_all_friends(fingr_user, message_string):
         send_message(friend, fingr_user, message_string, Message.NOTIFICATION)
 
 
+@login_required
 def notify_specific_friend(fingr_user, fingr_friend_pk, message_string):
     send_message(fingr_friend_pk, fingr_user, message_string, Message.NOTIFICATION)
 
 
+@login_required
 def message_specific_friend(fingr_user, fingr_friend_pk, message_string):
     send_message(fingr_friend_pk, fingr_user, message_string, Message.MESSAGE)
 
@@ -60,6 +63,7 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
+@login_required
 def message(request, send_to_user):
     form = MessageForm()
     print (request.get_full_path(), send_to_user)
@@ -113,6 +117,7 @@ def logout(request):
     return redirect('main.views.index')
 
 
+@login_required
 def add_friend(request, target_user_pk):
     """
     target_user_pk should be the primary key of the user that we want to add as a friend
@@ -130,6 +135,7 @@ def add_friend(request, target_user_pk):
     return redirect('main.views.index')
 
 
+@login_required
 def set_status(request):
     context = {}
 
@@ -160,6 +166,7 @@ def set_status(request):
     return render(request, 'status.html', context)
 
 
+@login_required
 def inbox(request):
     context = {}
     if request.user.is_authenticated():
@@ -178,6 +185,7 @@ def inbox(request):
     return render(request, 'inbox.html', context)
 
 
+@login_required
 def friends(request):
     context = {}
     if request.user.is_authenticated():
@@ -185,12 +193,16 @@ def friends(request):
         context['userlist'] = FingrUser.objects.all()
         context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
-    
 
+
+@login_required
 def view_map(request):
+    if not request.user.is_authenticated():
+        return redirect(index)
     return render(request, 'map.html')
 
 
+@login_required
 def search(request):
     context = {}
     if request.user.is_authenticated():

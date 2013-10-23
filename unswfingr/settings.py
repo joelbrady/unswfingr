@@ -9,6 +9,8 @@ ADMINS = (
     ('Joel Brady', 'jbrady@cse.unsw.edu.au'),
 )
 
+LOGIN_URL = '/login'
+
 MANAGERS = ADMINS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
