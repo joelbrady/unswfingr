@@ -1,23 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Activate{% endblock %}
 {% block content %}
-       <form class="form-horizontal" method="post" action="">
-            <h2 class=form-signin-heading">Activating user...</h2>
-
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            {% for field in form %}
-            <div class="form-group">
-
-                <div class="col-lg-10">
-                 <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
-                 {{ field}}
-
-                </div>
-                <span class="text-danger">{{ field.errors }}</span>
-            </div>
-
-            {% endfor %}
-
-        </form>
+            {% if code_fail %}
+            <h2>Incorrect verification code</h2>
+            {% elif user_fail %}
+            <h2>Incorrect username</h2>
+            {% else %}
+            <h2>Activating user {{ email }}</h2>
+            {% endif %}
 {% endblock %}
