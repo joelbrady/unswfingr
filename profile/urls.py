@@ -3,7 +3,7 @@ from profile import views
 
 urlpatterns = patterns('',
 
-    #url(r'^$',views.index),
+    url(r'^$',views.view_profile),
 
     url(r'^edit_courses', views.edit_course),
 
