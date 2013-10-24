@@ -3,10 +3,9 @@
 {% block content %}
 
 
-{% if authenticated %}
     <h2>
        Status -
-    {% if user.available %}
+    {% if fingr_user.available %}
     <span class="text-success">Free</span>
     {% else %}
     <span class="text-danger">Not Free</span>
@@ -43,5 +42,4 @@
         </div>
 
     </form>
-{% endif %}
 {% endblock %}

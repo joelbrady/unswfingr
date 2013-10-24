@@ -1,9 +1,13 @@
+from httplib import HTTP
 from itertools import chain
+import json
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
 from main.middleware import send_message
-from main.models import Message
+from main.models import Message, StaticLocation
 from registration.models import FingrUser, user_to_fingr
 
 
@@ -13,9 +17,7 @@ def index(request):
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
-        user = user_to_fingr(request.user)
-        context['user'] = user
-        
+
     return render(request, 'index.html', context)
 
 
@@ -60,6 +62,7 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
+@login_required
 def message(request, send_to_user):
     form = MessageForm()
     print (request.get_full_path(), send_to_user)
@@ -90,15 +93,17 @@ def message(request, send_to_user):
                 else:
                     context['feedback'] = "You are sending a message to someone who isn't your friend. They may not get this message"
 
-            received = user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).order_by('-time')
-            sent = target_user.messages_list.filter(sentFrom=user, type=Message.MESSAGE).order_by('-time')
-            user.messages_list.filter(sentFrom=target_user, type=Message.MESSAGE).update(read=True)
+            received = user.messages_list.filter(sentFrom=target_user,type=Message.MESSAGE).order_by('-time')
+            sent = target_user.messages_list.filter(sentTo=target_user, sentFrom=user, type=Message.MESSAGE).order_by('-time')
+
+            user.messages_list.filter(sentTo=user, type=Message.MESSAGE).update(read=True)
             conversation_history = sorted(chain(sent, received), key=lambda instance: instance.time, reverse=True)
+
+            #conversation_history = received
 
             #get the previous messages
             context['conversation'] = conversation_history[0:5]
             context['talking_to'] = target_user
-            context['user'] = user
         else:
             context['valid'] = False
             context['feedback'] = 'No such user exists'
@@ -113,6 +118,7 @@ def logout(request):
     return redirect('main.views.index')
 
 
+@login_required
 def add_friend(request, target_user_pk):
     """
     target_user_pk should be the primary key of the user that we want to add as a friend
@@ -122,7 +128,7 @@ def add_friend(request, target_user_pk):
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
-        notify_specific_friend(target_user, user, str(target_user.username) + 'has added you as a friend.')
+        notify_specific_friend(target_user, user, str(target_user.username) + ' has added you as a friend.')
 
     else:
         print "user tried to add themselves"
@@ -130,6 +136,7 @@ def add_friend(request, target_user_pk):
     return redirect('main.views.index')
 
 
+@login_required
 def set_status(request):
     context = {}
 
@@ -154,12 +161,12 @@ def set_status(request):
 
     if request.user.is_authenticated():
         context['authenticated'] = True
-        context['user'] = user_to_fingr(request.user)
         context['form'] = form
 
     return render(request, 'status.html', context)
 
 
+@login_required
 def inbox(request):
     context = {}
     if request.user.is_authenticated():
@@ -168,9 +175,16 @@ def inbox(request):
             user = user_to_fingr(request.user)
             conversations = user.messages_list.filter(type=Message.MESSAGE)
 
+
             people = set()
             for conversation in conversations:
-                people.add(conversation.sentFrom)
+                if conversation.sentFrom != user:
+                    people.add(conversation.sentFrom)
+
+                if conversation.sentTo != user:
+                     people.add(conversation.sentTo)
+
+
 
             context['conversations'] = people
     else:
@@ -178,24 +192,27 @@ def inbox(request):
     return render(request, 'inbox.html', context)
 
 
+@login_required
 def friends(request):
     context = {}
     if request.user.is_authenticated():
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
-        context['user'] = user_to_fingr(request.user)
     return render(request, 'available_friends.html', context)
-    
 
+
+@login_required
 def view_map(request):
+    if not request.user.is_authenticated():
+        return redirect(index)
     return render(request, 'map.html')
 
 
+@login_required
 def search(request):
     context = {}
     if request.user.is_authenticated():
         context['authenticated'] = True
-        context['user'] = user_to_fingr(request.user)
         # user is already searching
         if request.POST:
             form = SearchForm(request.POST)
@@ -207,11 +224,10 @@ def search(request):
                 return render(request, 'search.html', context)
         else:
             context['userlist'] = FingrUser.objects.all()
-            context['user'] = user_to_fingr(request.user)
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 
-    
+
 def activate(request):
     context = {}
     fuser = FingrUser.objects.filter(username=request.GET.get('user', 'test@test.com'))[0]
@@ -224,3 +240,78 @@ def activate(request):
         return render(request, 'activate.html', context)
     else:
         return redirect('main.views.index')
+
+
+@login_required
+def new_static_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
+    name = request.POST.get('name', None)
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+
+    response = {'success': False}
+
+    for x in [name, latitude, longitude]:
+        if x is None:
+            return HttpResponse(json.dumps(response))
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return HttpResponse(json.dumps(response))
+
+    loc = StaticLocation(name=name, latitude=latitude, longitude=longitude)
+    loc.save()
+
+    user = user_to_fingr(request.user)
+    user.static_locations.add(loc)
+
+    response['id'] = loc.pk
+    response['success'] = True
+
+    return HttpResponse(json.dumps(response))
+
+
+@login_required
+def update_static_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
+    pk = request.POST.get('id', None)
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+
+    try:
+        pk = int(pk)
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return HttpResponse(json.dumps({'success': False}))
+
+    static_marker_lookup = StaticLocation.objects.filter(pk=pk)
+    assert len(static_marker_lookup) <= 1
+    if len(static_marker_lookup) == 1:
+        static_marker = static_marker_lookup[0]
+        user = user_to_fingr(request.user)
+        if user.static_locations.filter(pk=static_marker.pk).count() > 0:
+            static_marker.latitude = latitude
+            static_marker.longitude = longitude
+            static_marker.save()
+            return HttpResponse(json.dumps({'success': True}))
+    return HttpResponse(json.dumps({'success': False}))
+
+
+@login_required
+def get_static_markers(request):
+    user = user_to_fingr(request.user)
+    response = []
+    # get users' own markers
+    for loc in user.static_locations.all():
+        response.append(loc.json)
+    # get all friends markers
+    for friend in user.friends.all():
+        for marker in friend.static_locations.all():
+            response.append(marker.json)
+    return HttpResponse(json.dumps(response))

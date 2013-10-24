@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from main.models import Message
+from main.models import Message, StaticLocation
 
 
 
@@ -19,10 +19,11 @@ class FingrUser(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     friends = models.ManyToManyField('self')
-    verified = models.BooleanField(default=True)
+    verified = models.BooleanField(default=False)
     v_code = models.CharField(max_length=50)
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
+    static_locations = models.ManyToManyField(StaticLocation)
 
 
 

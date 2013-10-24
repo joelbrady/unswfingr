@@ -4,24 +4,176 @@
     Map
 {% endblock %}
 
-{% block extra-scripts %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkkdD2uhSw13bqvoIeKQaX_zp4MqIsUfQ&sensor=false">
-
-    </script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(-33.917473, 151.23103),
-          zoom: 17,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
-{% endblock %}
-
 {% block content %}
     <div id="map-canvas" style="width: 100%; height: 500px;"></div>
+    <div id="map-buttons">
+        Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
+        <input id="static-marker-name" type="text"><br>
+        <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
+    </div>
+    <div id="user-static-markers" style="display: inline-block;">
+        <h3>My Locations:</h3>
+        {% for marker in fingr_user.static_locations.all %}
+            {{ marker.name }}<br>
+        {% endfor %}
+    </div>
+    <div id="friends-static-markers" style="display: inline-block; padding-left: 100px;">
+        <h3>Friends' Markers:</h3>
+        {% for friend in fingr_user.friends.all %}
+            <h4>{{ friend.email }}</h4>
+            {% for marker in friend.static_locations.all %}
+                {{ marker.name }}<br>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra-scripts %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkkdD2uhSw13bqvoIeKQaX_zp4MqIsUfQ&sensor=false"></script>
+    <script type="text/javascript">
+        // code from django documentation for csrf token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        function sameOrigin(url) {
+            // test that a given url is a same-origin URL
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                // or any other URL that isn't scheme relative or absolute i.e relative.
+                !(/^(\/\/|http:|https:).*/.test(url));
+        }
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        var Modes = {
+            NONE: 0,
+            STATIC: 1,
+            EVENT: 2
+        };
+        var currentMode = Modes.NONE;
+        var unswLoc = new google.maps.LatLng(-33.917473, 151.23103);
+
+        var map;
+        var markers = [];
+
+        function initialize() {
+            var mapOptions = {
+                center: new google.maps.LatLng(-33.917473, 151.23103),
+                zoom: 17,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+            $.ajax({
+                url: "{% url 'main.views.get_static_markers' %}",
+            }).done(function(response) {
+                var initialData = $.parseJSON(response);
+                for (var i = 0; i < initialData.length; i++) {
+                    makeStaticMarker($.parseJSON(initialData[i]));
+                }
+            });
+
+            function makeStaticMarker(data) {
+                console.log("making marker for %O", data);
+                var lat = data.lat;
+                var lng = data.lng;
+                var latLng = new google.maps.LatLng(lat, lng);
+                var staticMarker = new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            title: data.name,
+                            draggable: true,
+                            fingrId: data.id,
+                            fingrDrag: function(event) {
+                                $.ajax({
+                                    url: "{% url 'main.views.update_static_marker' %}",
+                                    data: {
+                                        id: this.fingrId,
+                                        lat: event.latLng.lat(),
+                                        lng: event.latLng.lng()
+                                    },
+                                    type: 'POST'
+                                });
+                            }
+                        });
+                console.log("new marker %O", staticMarker);
+                google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
+                if (staticMarker.fingrId !== undefined) {
+                    markers[staticMarker.fingrId] = staticMarker;
+                }
+                return staticMarker;
+            }
+
+            function clickOnMap(event) {
+                console.log("someone clicked @ " + event.latLng);
+                switch(currentMode) {
+                    case Modes.STATIC:
+                        var staticMarker = makeStaticMarker({
+                            name: $('#static-marker-name').val(),
+                            lat: event.latLng.lat(),
+                            lng: event.latLng.lng()
+                        });
+                        // we want to send to the server the name and latLng of our static marker to
+                        // save for next visit/friends to see
+                        $.ajax({
+                            url: "{% url 'main.views.new_static_marker' %}",
+                            data: {
+                                name: staticMarker.title,
+                                lat: staticMarker.position.lat(),
+                                lng: staticMarker.position.lng()
+                            },
+                            type: 'POST'
+                        }).done(function(response) {
+                            var r = JSON.parse(response);
+                            staticMarker.fingrId = r.id;
+                        });
+                        break;
+                    case Modes.EVENT:
+                        break;
+                    default:
+                        console.log("no active thing to do, ignore click");
+                }
+                currentMode = Modes.NONE;
+            }
+            google.maps.event.addDomListener(map, 'click', clickOnMap);
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+        function staticMode() {
+            // the next click on the map will create a new static location marker
+            currentMode = Modes.STATIC;
+        }
+    </script>
 {% endblock %}

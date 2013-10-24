@@ -9,6 +9,8 @@ ADMINS = (
     ('Joel Brady', 'jbrady@cse.unsw.edu.au'),
 )
 
+LOGIN_URL = '/login'
+
 MANAGERS = ADMINS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -69,6 +71,16 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+"django.core.context_processors.debug",
+"django.core.context_processors.i18n",
+"django.core.context_processors.media",
+"django.core.context_processors.static",
+"django.core.context_processors.tz",
+"django.contrib.messages.context_processors.messages",
+    'main.middleware.fingr_user_everywhere',
+)
 ROOT_URLCONF = 'unswfingr.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.

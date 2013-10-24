@@ -3,12 +3,11 @@
 {% block content %}
 
 
-{% if authenticated %}
     <h2 class="text-success">
        Free:
     </h2>
 
-    {% for friend in user.friends_list %}
+    {% for friend in fingr_user.friends_list %}
      {% if friend.available %}
      {{ friend.username }} - <span class="text-success">Free</span> <br />
     {% endif %}
@@ -18,11 +17,10 @@
        Unavailable:
     </h2>
 
-    {% for friend in user.friends_list %}
+    {% for friend in fingr_user.friends_list %}
      {% if not friend.available %}
      {{ friend.username }} - <span class="text-danger">Unavailable</span> <br />
     {% endif %}
     {% endfor %}
 
-{% endif %}
 {% endblock %}

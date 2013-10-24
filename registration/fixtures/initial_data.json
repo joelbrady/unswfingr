@@ -53,9 +53,36 @@
         "date_joined": "2013-10-22T14:40:01.852Z"
     }
 },
+
+{
+    "pk": 1,
+    "model": "profile.Profile",
+    "fields": {
+        "fingr_user": 1,
+        "courses": []
+    }
+},
+{
+    "pk": 2,
+    "model": "profile.Profile",
+    "fields": {
+        "fingr_user": 2,
+        "courses": []
+    }
+},
+{
+    "pk": 3,
+    "model": "profile.Profile",
+    "fields": {
+        "fingr_user": 3,
+        "courses": []
+    }
+},
+
+
 {
     "pk": 1, 
-    "model": "registration.fingruser", 
+    "model": "registration.fingruser",
     "fields": {
         "username": "test@test.com", 
         "available": false, 

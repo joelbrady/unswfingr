@@ -10,30 +10,37 @@ from django.template import RequestContext
 from registration.models import user_to_fingr
 from registration.forms import FingrUserForm
 
+def view_profile(request):
 
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+
+        c = {'username': f_user.username,
+             'email': f_user.email,
+             'first_name':f_user.first_name,
+             'last_name': f_user.last_name,
+            }
+        return render_to_response('profile.html', c, context_instance = RequestContext(request))
+    else:
+
+        return render_to_response('need_to_login.html')
 
 
 def edit_profile(request):
 
-    print "hello"
-    profile_form = FingrUserForm()
+
+
     if request.user.is_authenticated():
         f_user = user_to_fingr(request.user)
-        #
-        #print FingrUser.objects.count()
 
-        #profile.fingr_user = f_user
 
-        #print Profile.objects.count()
-        #print "test"
-        #print f_user.profile
         profile_form = FingrUserForm(initial= {'username':f_user.username , 'email': f_user.email, 'first_name': f_user.first_name ,
                                              'last_name': f_user.last_name})
 
         if request.method == "POST":
-            profile_form = ProfileForm( request.POST, request.FILES)
+
+            profile_form = FingrUserForm( request.POST, request.FILES)
             if profile_form.is_valid():
-                profile_form.save()
                 f_user.username = profile_form.cleaned_data['username']
                 f_user.email = profile_form.cleaned_data['email']
                 f_user.first_name = profile_form.cleaned_data['first_name']
@@ -45,11 +52,10 @@ def edit_profile(request):
             else:
                 print profile_form.errors
 
+        return render_to_response('edit_profile.html', {'profile_form': profile_form, }, context_instance = RequestContext(request))
+    else:
 
-
-
-
-    return render_to_response('edit_profile.html', {'profile_form': profile_form, }, context_instance = RequestContext(request))
+        return render_to_response('need_to_login.html')
 
 
 def edit_course(request):
@@ -155,20 +161,23 @@ def edit_course(request):
             # Not in the else.
             return render_to_response('add_courses.html')
 
-    course_formset = CourseFormSet(prefix='course')
-    lecture_formset = LectureFormSet(prefix='lecture')
-    day_time_formset = DayTimeFormSet(prefix='day_time')
-    tutorial_formset = TutorialFormSet(prefix='tutorial')
-    laboratory_formset = LaboratoryFormSet(prefix='laboratory')
+        course_formset = CourseFormSet(prefix='course')
+        lecture_formset = LectureFormSet(prefix='lecture')
+        day_time_formset = DayTimeFormSet(prefix='day_time')
+        tutorial_formset = TutorialFormSet(prefix='tutorial')
+        laboratory_formset = LaboratoryFormSet(prefix='laboratory')
 
-    c = {'course_formset': course_formset,
-         'lecture_formset': lecture_formset,
-         'day_time_formset': day_time_formset,
-         'tutorial_formset': tutorial_formset,
-         'laboratory_formset': laboratory_formset,
-        }
+        c = {'course_formset': course_formset,
+             'lecture_formset': lecture_formset,
+             'day_time_formset': day_time_formset,
+             'tutorial_formset': tutorial_formset,
+             'laboratory_formset': laboratory_formset,
+            }
 
-    return render_to_response('edit_courses.html',c, context_instance = RequestContext(request))
+        return render_to_response('edit_courses.html',c, context_instance = RequestContext(request))
+    else:
+
+        return render_to_response('need_to_login.html')
 
 
 
