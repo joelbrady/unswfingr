@@ -230,16 +230,20 @@ def search(request):
 
 def activate(request):
     context = {}
-    fuser = FingrUser.objects.filter(username=request.GET.get('user', 'test@test.com'))[0]
-    if fuser is not None:
+    if (FingrUser.objects.filter(username=request.GET.get('user'))):
+        fuser = FingrUser.objects.filter(username=request.GET.get('user'))[0]
         vcode = request.GET.get('code', '')
         if fuser.v_code == vcode:
             fuser.verify()
             fuser.save()
             print("activated")
+            context['email'] = fuser
+        else:
+            context['code_fail'] = True
         return render(request, 'activate.html', context)
     else:
-        return redirect('main.views.index')
+        context['user_fail'] = True
+        return render(request, 'activate.html', context)
 
 
 @login_required

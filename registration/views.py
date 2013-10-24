@@ -32,11 +32,8 @@ def register(request):
 
 def verification(email, fingr_user, request):
     """ send verification email
-     random long (50bit) string should be enough for validation purposes
-     link this string to the user, dont allow them to login until verified
+     random long (50 char) string should be enough for validation purposes
     """
-    # this is not a "50 bit string" just because it has 50 characters in it...
-    # string generation from
     # http://stackoverflow.com/questions/2257441/python-random-string-generation-with-upper-case-letters-and-digits
     link = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(50))
     fingr_user.v_code = link
