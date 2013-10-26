@@ -5,9 +5,9 @@ from registration.models import FingrUser
 
 
 class RegistrationForm(forms.Form):
-    email = forms.EmailField(max_length=30, widget=forms.TextInput(attrs={'class':'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=MAXIMUM_PASSWORD_LENGTH)
-    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput(attrs={'class':'form-control'}), max_length=MAXIMUM_PASSWORD_LENGTH)
+    email = forms.EmailField(max_length=30, widget=forms.TextInput(attrs={'autofocus':'true'}))
+    password = forms.CharField(widget=forms.PasswordInput(), max_length=MAXIMUM_PASSWORD_LENGTH)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput(), max_length=MAXIMUM_PASSWORD_LENGTH)
     
     # django automatically calls clean_ for each vield in the form
     # either return the cleaned value, or raise a forms.ValidationError

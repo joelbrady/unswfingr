@@ -4,6 +4,7 @@
 
     </head>
     <body>
+    <!--
     <h1> Editing profile</h1>
     <h2> Profile details </h2>
     <form action="" method="POST">{% csrf_token %}
@@ -11,13 +12,46 @@
             {{ profile_form.as_p }}
         </div>
         <p>
-        <a href="{% url 'profile.views.edit_course' %}"> Manually add courses </a>
         </p>
-        <!--<p><a id="add" href="#">Add another Course</a></p>-->
+        <!--<p><a id="add" href="#">Add another Course</a></p>
         <p>
         <input type="submit" value=" Submit " />
         </p>
     </form>
+    -->
+
+    <form class="form-horizontal" method="post" action="">
+            <h2 class=form-signin-heading">Edit Profile</h2>
+
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in profile_form %}
+            <div class="form-group">
+                <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+                <div class="col-lg-10">
+                    {% load widget_tweaks %}
+                    {% render_field field class="form-control" placeholder=field.label %}
+
+
+                </div>
+                <span class="text-danger">{{ field.errors }}</span>
+            </div>
+
+            {% endfor %}
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+
+
+                    <button class="btn btn-primary" type="submit">Update</button>
+
+                </div>
+            </div>
+
+                <a href="{% url 'profile.views.edit_course' %}"> Manually add courses </a>
+
+        </form>
     </body>
 {% endblock %}
 

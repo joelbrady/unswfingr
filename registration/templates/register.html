@@ -11,7 +11,8 @@
                 <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
 
                 <div class="col-lg-10">
-                        {{ field }}
+                    {% load widget_tweaks %}
+                    {% render_field field class="form-control" placeholder=field.label %}
 
                 </div>
                 <span class="text-danger">{{ field.errors }}</span>

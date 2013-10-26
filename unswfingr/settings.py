@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'profile',
     'map',
     'main',
+    'widget_tweaks',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
