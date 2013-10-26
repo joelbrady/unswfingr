@@ -11,6 +11,9 @@ from registration.models import user_to_fingr
 from registration.models import FingrUser
 from registration.forms import FingrUserForm
 from django.contrib.auth.decorators import login_required
+import itertools
+
+
 
 
 @login_required
@@ -37,39 +40,39 @@ def view_profile(request, target_user_pk):
         for course in profile.courses.all():
             for lecture in course.lectures.all():
                 if lecture.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                    monday = monday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
                 elif lecture.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                    tuesday = tuesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
                 elif lecture.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                    wednesday = wednesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
                 elif lecture.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                    thursday = thursday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
                 elif lecture.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                    friday = friday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
 
             for tutorial in course.tutorials.all() :
                 if tutorial.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                    monday = monday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
                 elif tutorial.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                    tuesday = tuesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
                 elif tutorial.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                    wednesday = wednesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
                 elif tutorial.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                    thursday = thursday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
                 elif tutorial.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                    friday = friday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
 
             for lab in course.labs.all() :
                 if lab.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t"  + lab.end_time + "\n"
+                    monday = monday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-"  + lab.end_time + "\n"
                 elif lab.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                    tuesday = tuesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
                 elif lab.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                    wednesday = wednesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
                 elif lab.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                    thursday = thursday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
                 elif lab.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                    friday = friday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
 
         monday = monday.strip("\n")
         tuesday = tuesday.strip("\n")
@@ -83,9 +86,30 @@ def view_profile(request, target_user_pk):
         thursday_dict = thursday.split("\n")
         friday_dict = friday.split("\n")
 
+        final_monday = []
+        final_tuesday = []
+        final_wednesday = []
+        final_thursday = []
+        final_friday = []
         for sub in monday_dict:
             for splitted in sub.split("\t"):
-                print splitted
+                final_monday.append(splitted)
+
+        for sub in tuesday_dict:
+            for splitted in sub.split("\t"):
+                final_tuesday.append(splitted)
+
+        for sub in wednesday_dict:
+            for splitted in sub.split("\t"):
+                final_wednesday.append(splitted)
+
+        for sub in thursday_dict:
+            for splitted in sub.split("\t"):
+                final_thursday.append(splitted)
+
+        for sub in friday_dict:
+            for splitted in sub.split("\t"):
+                final_friday.append(splitted)
 
 
 
@@ -96,15 +120,27 @@ def view_profile(request, target_user_pk):
         print "'" + thursday + "'"
         print "'" + friday + "'"
 
+
+        iterator =  itertools.count()
+        iterator2 = itertools.count()
+        iterator3 = itertools.count()
+        iterator4 = itertools.count()
+        iterator5 = itertools.count()
+
         c = {'username': f_user.username,
             'email': f_user.email,
             'first_name':f_user.first_name,
             'last_name': f_user.last_name,
-            'monday': monday_dict,
-            'tuesday': tuesday,
-            'wednesday': wednesday,
-            'thursday': thursday,
-            'friday': friday,
+            'monday': final_monday,
+            'tuesday': final_tuesday,
+            'wednesday': final_wednesday,
+            'thursday': final_thursday,
+            'friday': final_friday,
+            'iterator': iterator,
+            'iterator2': iterator2,
+            'iterator3': iterator3,
+            'iterator4': iterator4,
+            'iterator5': iterator5,
             }
 
         return render_to_response('profile.html', c, context_instance = RequestContext(request))

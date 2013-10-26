@@ -16,21 +16,156 @@
                 {% endfor %}
             </ul>
 
-            {% for data in monday %}
-                <p> {{ data }} </p>
-            {% endfor %}
+            {% ifequal monday|length 1  %}
+                {% ifequal tuesday|length 1 %}
+                    {% ifequal wednesday|length 1 %}
+                        {% ifequal thursday|length 1 %}
+                            {% ifequal friday|length 1 %}
+                                <p> <b> Please add timetable.</b> </p>
+                            {% endifequal %}
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endifequal %}
+            {% endifequal %}
 
-            <!--<table border="1">-->
+            <table border="2">
 
-                <!--<tr>-->
-                <!--<td>row 1, cell 1</td>-->
-                <!--<td>row 1, cell 2</td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                <!--<td>row 2, cell 1</td>-->
-                <!--<td>row 2, cell 2</td>-->
-                <!--</tr>-->
-            <!--</table>-->
+
+                {% ifequal monday|length 1 %}
+                {% else %}
+                    <tr>
+                            <td>
+                                Monday
+                            </td>
+                    {% if iterator.next %}
+                        <td>
+                    {% endif %}
+
+                    {% for data in monday %}
+                        {% if iterator.next|add:"-1"|divisibleby:"3" %}
+                            <td>
+                        {% endif %}
+
+                        <p> {{ data }} </p>
+
+                        {% if iterator.next|divisibleby:"3" %}
+                            </td>
+                        {% endif %}
+
+
+                    {% endfor %}
+                    </tr>
+                {% endifequal %}
+
+
+
+                 {% ifequal tuesday|length 1 %}
+                 {% else %}
+                    <tr>
+                        <td>
+                            Tuesday
+                        </td>
+                        {% if iterator2.next %}
+                            <td>
+                        {% endif %}
+
+                        {% for data in tuesday %}
+                            {% if iterator2.next|add:"-1"|divisibleby:"3" %}
+                                <td>
+                            {% endif %}
+
+                            <p> {{ data }} </p>
+                           
+                            {% if iterator2.next|divisibleby:"3" %}
+                                </td>
+                            {% endif %}
+
+
+                        {% endfor %}
+                    </tr>
+                {% endifequal %}
+
+
+                {% ifequal wednesday|length 1 %}
+                {%else%}
+                    <tr>
+                            <td>
+                                Wednesday
+                            </td>
+                    {% if iterator3.next %}
+                        <td>
+                    {% endif %}
+
+                    {% for data in wednesday %}
+                        {% if iterator3.next|add:"-1"|divisibleby:"3" %}
+                            <td>
+                        {% endif %}
+
+                        <p> {{ data }} </p>
+
+                        {% if iterator3.next|divisibleby:"3" %}
+                            </td>
+                        {% endif %}
+
+
+                    {% endfor %}
+                    </tr>
+                {% endifequal %}
+
+                {% ifequal thursday|length 1 %}
+                {%else%}
+                    <tr>
+                            <td>
+                                Thursday
+                            </td>
+                    {% if iterator4.next %}
+                        <td>
+                    {% endif %}
+
+                    {% for data in thursday %}
+                        {% if iterator4.next|add:"-1"|divisibleby:"3" %}
+                            <td>
+                        {% endif %}
+
+                        <p> {{ data }} </p>
+
+                        {% if iterator4.next|divisibleby:"3" %}
+                            </td>
+                        {% endif %}
+
+
+                    {% endfor %}
+                    </tr>
+                {%endifequal %}
+
+                {% ifequal friday|length 1 %}
+                {%else%}
+                    <tr>
+                            <td>
+                                Friday
+                            </td>
+                    {% if iterator5.next %}
+                        <td>
+                    {% endif %}
+
+                    {% for data in friday %}
+                        {% if iterator5.next|add:"-1"|divisibleby:"3" %}
+                            <td>
+                        {% endif %}
+
+                        <p> {{ data }} </p>
+
+                        {% if iterator5.next|divisibleby:"3" %}
+                            </td>
+                        {% endif %}
+
+
+                    {% endfor %}
+                    </tr>
+                {% endifequal %}
+
+
+            </table>
         </center>
 
         <p>
