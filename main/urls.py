@@ -13,4 +13,7 @@ urlpatterns = patterns('',
     url(r'^inbox/?$', views.inbox),
     url(r'^search$', views.search),
     url(r'^activate', views.activate),
+    url(r'^set_online$', views.set_online),
+    url(r'^set_offline', views.set_offline),
+
 )

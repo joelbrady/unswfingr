@@ -1,28 +1,85 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-    {% comment %}
-    Index page shows link to registration if not signed in,
-    else shows home page for user
-    {% endcomment %}
+{% comment %}
+Index page shows link to registration if not signed in,
+else shows home page for user
+{% endcomment %}
 
-    {% if authenticated %}
-    Welcome to unswFingr.me {{ username }}!<br>
-    user: {{ fingr_user }}<br>
-    Friends List:<br>
-    {% for friend in fingr_user.friends_list %}
-    Friend: {{ friend.username }}<br>
-    {% endfor %}
-    User List:<br>
-    {% for user in userlist %}
-        User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username }}</a><br>
-    {% endfor %}
-    <a href="{% url 'map.views.view_map' %}">Map</a><br>
-    <a href="{% url 'main.views.logout' %}">Logout</a>
+{% if authenticated %}
+
+<!--
+Welcome to unswFingr.me {{ username }}!<br>
+user: {{ fingr_user }}<br>
+Friends List:<br>
+{% for friend in fingr_user.friends_list %}
+Friend: {{ friend.username }}<br>
+{% endfor %}
+User List:<br>
+{% for user in userlist %}
+User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username }}</a><br>
+{% endfor %}
+<a href="{% url 'map.views.view_map' %}">Map</a><br>
+<a href="{% url 'main.views.logout' %}">Logout</a>
+
+<h3 clas="text-danger">New index page below here</h3>
+
+<hr />
+-->
+<!---------------------------------------------->
+
+<div class="highlight">
+
+    <div class="row">
+                <div class="col-md-2">
+        <strong>
+        I am currently
+        </strong>
+
+                    </div>
+        <div class="col-md-5">
+            <a href="{% url 'main.views.set_online' %}">
+                <button type="button" class="btn btn-success btn-block">Free </button>
+            </a>
+        </div>
+        <div class="col-md-5">
+            <a href="{% url 'main.views.set_offline' %}">
+                <button type="button" class="btn btn-danger btn-block">Unavailalbe</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% if hasOnlineFriends %}
+
+<h2 class="text-success">
+    Friends Online:
+</h2>
+{% for friend in fingr_user.friends_list %}
+
+<a href="{% url 'profile.views.view_profile' friend.pk %}">
+    {% if friend.available %}
+    {% if friend.first_name and friend.last_name %}
+    {{ friend.first_name}} {{ friend.last_name }}
     {% else %}
-    Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
-    Click <a href="{% url 'registration.views.register' %}">here</a> to register.
+    {{ friend.username }}
     {% endif %}
+    - <span class="text-success">Free</span> <br />
+
+</a>
+{% endif %}
+{% endfor %}
+{% else %}
+<h2>
+    No friends are currently free.
+</h2>
+{% endif %}
+
+
+{% else %}
+Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>
+Click <a href="{% url 'registration.views.register' %}">here</a> to register.
+{% endif %}
+
 
 
 

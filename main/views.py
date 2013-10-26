@@ -12,8 +12,11 @@ def index(request):
     context = {}
 
     if request.user.is_authenticated():
+        user = user_to_fingr(request.user)
+
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
+        context['hasOnlineFriends'] = user.friends_list.filter(available=True).count
 
     return render(request, 'index.html', context)
 
@@ -107,6 +110,22 @@ def message(request, send_to_user):
     else:
         return redirect('main.views.login')
     return render(request, 'message.html', context)
+
+@login_required
+def set_online(request):
+    user = user_to_fingr(request.user)
+    user.available = True
+    user.save()
+    return redirect('main.views.index')
+
+
+@login_required
+def set_offline(request):
+    user = user_to_fingr(request.user)
+    user.available = False
+    user.save()
+    return redirect('main.views.index')
+
 
 
 def logout(request):
@@ -217,6 +236,7 @@ def search(request):
             context['userlist'] = FingrUser.objects.all()
             return render(request, 'search.html', context)
     return redirect('main.views.index')
+
 
 
 def activate(request):

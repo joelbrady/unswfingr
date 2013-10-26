@@ -8,13 +8,32 @@
             </button>
 
             {% if fingr_user %}
+                        <a class="navbar-brand" href="/">
                         {% if fingr_user.first_name and fingr_user.last_name %}
-                            <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.first_name}} {{fingr_user.last_name}}</a>
+                            unswFingr.me - {{fingr_user.first_name}} {{fingr_user.last_name}}
 
                         {% else %}
-                                <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.username}}</a>
+                                unswFingr.me - {{fingr_user.username}}
 
                         {% endif %}
+                        {% if fingr_user.available %}
+                            <span class="glyphicon-green">
+                         <span class="glyphicon glyphicon-chevron-up "></span>
+                                - Free
+                            </span>
+
+
+
+                        {% else %}
+                        <span class="glyphicon-red">
+                         <span class="glyphicon glyphicon-chevron-down "></span>
+                                - Unavailable
+                            </span>
+                        {% endif %}
+
+
+
+                        </a>
 
             {% else %}
                         <a class="navbar-brand" href="#">unswFingr.me</a>
@@ -23,12 +42,13 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home <span class="glyphicon glyphicon-home" /></a></li>
-
                 {% if user.is_authenticated %}
 
                 <li><a href="{% url 'main.views.logout' %}">Log out <span class="glyphicon glyphicon-off" /></a></li>
+
+                <!--
                 <li><a href="{% url 'main.views.set_status' %}">Update Availability <span class="glyphicon glyphicon-time" /></a></li>
+                -->
                 <li><a href="{% url 'profile.views.view_profile' user.pk %}"> Profile <span class="glyphicon glyphicon-user" /></a></li>
 
 

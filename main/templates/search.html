@@ -38,7 +38,7 @@
             
             Found Users:<br>
             {% for user in userlist %}
-            User: <a href="{% url 'main.views.add_friend' user.pk %}">{{ user.username }}</a><br>
+            User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username }}</a><br>
             {% endfor %}
     
         </form>

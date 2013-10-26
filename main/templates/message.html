@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if valid %}
-        <h3>Conversation with {{talking_to.username}}</h3>
+        <h3>Conversation with {{talking_to.first_name}} {{talking_to.last_name}}</h3>
         <hr />
         {% if conversation %}
 
@@ -48,7 +48,8 @@
                 <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
 
                 <div class="col-lg-10">
-                        {{ field }}
+                    {% load widget_tweaks %}
+                    {% render_field field class="form-control" autofocus="true" %}
 
                 </div>
                 <span class="text-danger">{{ field.errors }}</span>
