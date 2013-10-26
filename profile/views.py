@@ -8,24 +8,111 @@ from django.http import HttpResponse
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
 from registration.models import user_to_fingr
+from registration.models import FingrUser
 from registration.forms import FingrUserForm
+from django.contrib.auth.decorators import login_required
 
-def view_profile(request):
+
+@login_required
+def view_profile(request, target_user_pk):
+    print target_user_pk
 
     if request.user.is_authenticated():
-        f_user = user_to_fingr(request.user)
+        f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
+
+        profile = Profile.objects.get(fingr_user=f_user)
+
+        # Trying to print courses in a graphical way.
+        #for course in profile.courses.all():
+        #    print course.course_code
+        #    print course.course_name
+        #
+        #
+        #ordered_courses = { }
+        monday = ""
+        tuesday = ""
+        wednesday = ""
+        thursday = ""
+        friday = ""
+        for course in profile.courses.all():
+            for lecture in course.lectures.all():
+                if lecture.choices_of_days == "MON":
+                    monday = monday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                elif lecture.choices_of_days == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                elif lecture.choices_of_days == "WED":
+                    wednesday = wednesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                elif lecture.choices_of_days == "THU":
+                    thursday = thursday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+                elif lecture.choices_of_days == "FRI":
+                    friday = friday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "\t" + lecture.end_time + "\n"
+
+            for tutorial in course.tutorials.all() :
+                if tutorial.choices_of_days == "MON":
+                    monday = monday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                elif tutorial.choices_of_days == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                elif tutorial.choices_of_days == "WED":
+                    wednesday = wednesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                elif tutorial.choices_of_days == "THU":
+                    thursday = thursday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+                elif tutorial.choices_of_days == "FRI":
+                    friday = friday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "\t" + tutorial.end_time + "\n"
+
+            for lab in course.labs.all() :
+                if lab.choices_of_days == "MON":
+                    monday = monday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t"  + lab.end_time + "\n"
+                elif lab.choices_of_days == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                elif lab.choices_of_days == "WED":
+                    wednesday = wednesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                elif lab.choices_of_days == "THU":
+                    thursday = thursday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+                elif lab.choices_of_days == "FRI":
+                    friday = friday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "\t" + lab.end_time + "\n"
+
+        monday = monday.strip("\n")
+        tuesday = tuesday.strip("\n")
+        wednesday = wednesday.strip("\n")
+        thursday = thursday.strip("\n")
+        friday = friday.strip("\n")
+
+        monday_dict = monday.split("\n")
+        tuesday_dict = tuesday.split("\n")
+        wednesday_dict = wednesday.split("\n")
+        thursday_dict = thursday.split("\n")
+        friday_dict = friday.split("\n")
+
+        for sub in monday_dict:
+            for splitted in sub.split("\t"):
+                print splitted
+
+
+
+
+        print monday_dict
+        print "'" + tuesday + "'"
+        print "'" + wednesday + "'"
+        print "'" + thursday + "'"
+        print "'" + friday + "'"
 
         c = {'username': f_user.username,
-             'email': f_user.email,
-             'first_name':f_user.first_name,
-             'last_name': f_user.last_name,
+            'email': f_user.email,
+            'first_name':f_user.first_name,
+            'last_name': f_user.last_name,
+            'monday': monday_dict,
+            'tuesday': tuesday,
+            'wednesday': wednesday,
+            'thursday': thursday,
+            'friday': friday,
             }
+
         return render_to_response('profile.html', c, context_instance = RequestContext(request))
     else:
 
         return render_to_response('need_to_login.html')
 
-
+@login_required
 def edit_profile(request):
 
 
@@ -48,16 +135,16 @@ def edit_profile(request):
                 f_user.save()
 
 
-                return  render_to_response('updated_profile.html')
+                return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
             else:
                 print profile_form.errors
 
         return render_to_response('edit_profile.html', {'profile_form': profile_form, }, context_instance = RequestContext(request))
     else:
 
-        return render_to_response('need_to_login.html')
+        return render_to_response('need_to_login.html', context_instance = RequestContext(request))
 
-
+@login_required
 def edit_course(request):
     #This class is used to make empty formset forms required
     # See http://stackoverflow.com/questions/2406537/django-formsets-make-first-required/4951032#4951032
@@ -177,7 +264,7 @@ def edit_course(request):
         return render_to_response('edit_courses.html',c, context_instance = RequestContext(request))
     else:
 
-        return render_to_response('need_to_login.html')
+        return render_to_response('need_to_login.html', context_instance = RequestContext(request))
 
 
 
