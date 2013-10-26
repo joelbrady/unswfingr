@@ -18,7 +18,7 @@ def register(request):
         if form.is_valid():
             user = create_fingr_user(form.cleaned_data['email'], form.cleaned_data['password'])
 
-            verification(form.cleaned_data['email'], user)
+            verification(form.cleaned_data['email'], user, request)
 
             profile = Profile(fingr_user = user)
             profile.save()
