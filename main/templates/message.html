@@ -7,7 +7,7 @@
         <hr />
         {% if conversation %}
 
-        <span class="text-muted">Most recent meessages are shown on top.</span>
+        <span class="text-muted">Most recent messages are shown on top.</span>
            {% for message in conversation %}
 
                 {% if message.sentFrom == fingr_user %}
@@ -17,7 +17,7 @@
 
                 {% else %}
                 <div class="highlight highlight-left">
-                <strong class="text-primary">{{message.sentFrom}}</strong><br />
+                <strong class="text-primary">{{message.sentFrom.first_name}} {{message.sentFrom.last_name}}</strong><br />
                 {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
 
                 {% endif %}
