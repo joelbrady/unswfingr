@@ -20,10 +20,11 @@ Edit Profile
         </h1>
     <span class="glyphicon glyphicon-ok"></span> Friends
     {% else %}
+        {% if user.pk != target_user_pk %}
         <a href="{% url 'main.views.add_friend' target_user_pk %}">
         <button type="button" class="btn btn-success">Add Friend <span class="glyphicon glyphicon-plus"></span>
         </button>
-
+        {% endif %}
     </a>
     </h1>
     {% endif %}
