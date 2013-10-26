@@ -8,9 +8,9 @@
 
         </head>
         <body>
-         <p>Your profile has been updated </p>
-         <p><a href="edit_profile.html" > Back to profile </a></p>
-        </body>
+            <p>Your profile has been updated </p>
+            <a href="{% url 'profile.views.view_profile' user.pk %}"> Back to profile </a>
+         </body>
 
 
 {% endblock %}

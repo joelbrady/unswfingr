@@ -18,7 +18,7 @@ import itertools
 
 @login_required
 def view_profile(request, target_user_pk):
-    print target_user_pk
+    print "target user" + target_user_pk
 
     if request.user.is_authenticated():
         f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
@@ -112,20 +112,29 @@ def view_profile(request, target_user_pk):
                 final_friday.append(splitted)
 
 
-
-
-        print monday_dict
-        print "'" + tuesday + "'"
-        print "'" + wednesday + "'"
-        print "'" + thursday + "'"
-        print "'" + friday + "'"
-
-
         iterator =  itertools.count()
         iterator2 = itertools.count()
         iterator3 = itertools.count()
         iterator4 = itertools.count()
         iterator5 = itertools.count()
+
+        is_friend = 0
+
+
+
+        me_f_user = user_to_fingr(request.user)
+        #print me_f_user.friends.get(pk=target_user_pk)
+        #if(request.user.pk == target_user_pk):
+        #    is_user = 1
+
+        target_user_pk = int(target_user_pk)
+        is_friend = False
+        for friend in me_f_user.friends_list:
+            if friend.pk == target_user_pk:
+                is_friend = True
+
+
+
 
         c = {'username': f_user.username,
             'email': f_user.email,
@@ -141,6 +150,8 @@ def view_profile(request, target_user_pk):
             'iterator3': iterator3,
             'iterator4': iterator4,
             'iterator5': iterator5,
+            'target_user_pk': target_user_pk,
+            'is_friend' : is_friend,
             }
 
         return render_to_response('profile.html', c, context_instance = RequestContext(request))

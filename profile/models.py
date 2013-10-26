@@ -2,13 +2,13 @@ from django.db import models
 from registration.models import FingrUser
 
 days = (
-     ('SUN', 'Sunday'),
+
      ('MON', 'Monday'),
      ('TUE', 'Tuesday'),
      ('WED', 'Wednesday'),
      ('THU', 'Thursday'),
      ('FRI', 'Friday'),
-     ('SAT', 'Saturday'),
+
 )
 
 times = (
@@ -34,7 +34,7 @@ class Day_Times(models.Model):
 
     choices_of_days = models.CharField(max_length=3,
                                       choices=days,
-                                      default='SUN')
+                                      default='MON')
 
 
     start_time = models.CharField(max_length=2,
@@ -66,7 +66,7 @@ class Profile(models.Model):
 
 class Lecture(models.Model):
     lecture_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='SUN')
+    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 
@@ -77,7 +77,7 @@ class Lecture(models.Model):
 
 class Tutorial(models.Model):
     tutorial_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='SUN')
+    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 
@@ -88,7 +88,7 @@ class Tutorial(models.Model):
 
 class Labs(models.Model):
     lab_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='SUN')
+    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 

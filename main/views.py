@@ -120,6 +120,7 @@ def add_friend(request, target_user_pk):
     """
     target_user_pk should be the primary key of the user that we want to add as a friend
     """
+
     user = user_to_fingr(request.user)
     target_user = FingrUser.objects.filter(pk=target_user_pk)[0]
     if target_user.username != request.user.username:
