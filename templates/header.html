@@ -8,7 +8,13 @@
             </button>
 
             {% if fingr_user %}
-                        <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.username}}</a>
+                        {% if fingr_user.first_name and fingr_user.last_name %}
+                            <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.first_name}} {{fingr_user.last_name}}</a>
+
+                        {% else %}
+                                <a class="navbar-brand" href="#">unswFingr.me - {{fingr_user.username}}</a>
+
+                        {% endif %}
 
             {% else %}
                         <a class="navbar-brand" href="#">unswFingr.me</a>

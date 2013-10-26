@@ -168,15 +168,14 @@ def edit_profile(request):
         f_user = user_to_fingr(request.user)
 
 
-        profile_form = FingrUserForm(initial= {'username':f_user.username , 'email': f_user.email, 'first_name': f_user.first_name ,
+        profile_form = FingrUserForm(initial= {'first_name': f_user.first_name ,
                                              'last_name': f_user.last_name})
 
         if request.method == "POST":
 
             profile_form = FingrUserForm( request.POST, request.FILES)
             if profile_form.is_valid():
-                f_user.username = profile_form.cleaned_data['username']
-                f_user.email = profile_form.cleaned_data['email']
+
                 f_user.first_name = profile_form.cleaned_data['first_name']
                 f_user.last_name = profile_form.cleaned_data['last_name']
                 f_user.save()
