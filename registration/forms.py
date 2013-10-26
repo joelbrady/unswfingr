@@ -22,4 +22,4 @@ class RegistrationForm(forms.Form):
 class FingrUserForm(ModelForm):
     class Meta:
         model = FingrUser
-        exclude = ('messages','verified','django_user', 'friends', 'v_code', 'available', 'email', 'username','static_locations')
+        exclude = ('messages','verified','django_user', 'friends', 'v_code', 'available', 'email', 'username','static_locations', "my_location")

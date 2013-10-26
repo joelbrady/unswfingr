@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth.decorators import login_required
+from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import main
@@ -25,7 +26,7 @@ def new_static_marker(request):
 
     response = {'success': False}
 
-    for x in [name, latitude, longitude]:
+    for x in (name, latitude, longitude):
         if x is None:
             return HttpResponse(json.dumps(response))
     try:
@@ -40,7 +41,7 @@ def new_static_marker(request):
     user = user_to_fingr(request.user)
     user.static_locations.add(loc)
 
-    response['id'] = loc.pk
+    response['pk'] = loc.pk
     response['success'] = True
 
     return HttpResponse(json.dumps(response))
@@ -54,6 +55,10 @@ def update_static_marker(request):
     pk = request.POST.get('id', None)
     latitude = request.POST.get('lat', None)
     longitude = request.POST.get('lng', None)
+
+    for field in (pk, latitude, longitude):
+        if field is None:
+            return HttpResponse(json.dumps({'success': False}))
 
     try:
         pk = int(pk)
@@ -78,12 +83,54 @@ def update_static_marker(request):
 @login_required
 def get_static_markers(request):
     user = user_to_fingr(request.user)
+    assert user is not None
+
     response = []
     # get users' own markers
     for loc in user.static_locations.all():
-        response.append(loc.json)
+        response.append(loc)
     # get all friends markers
     for friend in user.friends.all():
         for marker in friend.static_locations.all():
-            response.append(marker.json)
+            response.append(marker)
+
+    def model_to_dict_wrapper(instance):
+        d = model_to_dict(instance, fields=['name', 'latitude', 'longitude'])
+        d['id'] = instance.pk
+        return d
+
+    response = map(model_to_dict_wrapper, response)
     return HttpResponse(json.dumps(response))
+
+
+@login_required
+def set_my_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
+    user = user_to_fingr(request.user)
+    assert user is not None
+
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+
+    for field in (latitude, longitude):
+        if field is None:
+            return HttpResponse(json.dumps({'success': False}))
+
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        return HttpResponse(json.dumps({'success': False}))
+
+    my_location = user.my_location
+    my_location.latitude = latitude
+    my_location.longitude = longitude
+    my_location.save()
+
+    return HttpResponse(json.dumps({'success': True}))
+
+@login_required
+def get_my_marker(request):
+    return HttpResponse(json.dumps({'success': False}))

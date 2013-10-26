@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block title %}
     Map
 {% endblock %}
@@ -10,15 +12,17 @@
         Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
         <input id="static-marker-name" type="text"><br>
         <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
+        <button id="new-event" type="button" onclick="">Add new event</button>
+        <button id="my-location" type="button" onclick="meMode()">Set your location</button>
     </div>
     <div id="user-static-markers" style="display: inline-block;">
         <h3>My Locations:</h3>
         {% for marker in fingr_user.static_locations.all %}
-            {{ marker.name }}<br>
+            <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
         {% endfor %}
     </div>
     <div id="friends-static-markers" style="display: inline-block; padding-left: 100px;">
-        <h3>Friends' Markers:</h3>
+        <h3>Friends' Locations:</h3>
         {% for friend in fingr_user.friends.all %}
             <h4>{{ friend.email }}</h4>
             {% for marker in friend.static_locations.all %}
@@ -80,13 +84,36 @@
         var Modes = {
             NONE: 0,
             STATIC: 1,
-            EVENT: 2
+            EVENT: 2,
+            ME: 3
         };
         var currentMode = Modes.NONE;
         var unswLoc = new google.maps.LatLng(-33.917473, 151.23103);
 
         var map;
-        var markers = [];
+        var markers = {};
+        var selectedMarker;
+        var meMarker;
+
+        var icons = {
+            default: {
+                url: "{% static 'images/marker_grey.png' %}",
+                scaledSize: new google.maps.Size(23, 34),
+                anchor: new google.maps.Point(17, 34)
+            },
+
+            me: {
+                url: "{% static 'images/marker_blue.png' %}",
+                scaledSize: new google.maps.Size(23, 34),
+                anchor: new google.maps.Point(17, 34)
+            },
+
+            selected: {
+                url: "{% static 'images/marker_red.png' %}",
+                scaledSize: new google.maps.Size(23, 34),
+                anchor: new google.maps.Point(17, 34)
+            }
+        };
 
         function initialize() {
             var mapOptions = {
@@ -101,20 +128,51 @@
             }).done(function(response) {
                 var initialData = $.parseJSON(response);
                 for (var i = 0; i < initialData.length; i++) {
-                    makeStaticMarker($.parseJSON(initialData[i]));
+                    makeStaticMarker(initialData[i]);
                 }
             });
 
+            // TODO get me marker
+
             function makeStaticMarker(data) {
                 console.log("making marker for %O", data);
-                var lat = data.lat;
-                var lng = data.lng;
-                var latLng = new google.maps.LatLng(lat, lng);
+                var latLng = new google.maps.LatLng(data.latitude, data.longitude);
                 var staticMarker = new google.maps.Marker({
                             position: latLng,
                             map: map,
                             title: data.name,
                             draggable: true,
+                            icon: icons.default,
+                            fingrId: data.id,
+                            fingrDrag: function(event) {
+                                $.ajax({
+                                    url: "{% url 'map.views.update_static_marker' %}",
+                                    data: {
+                                        id: this.fingrId,
+                                        lat: event.latLng.lat(),
+                                        lng: event.latLng.lng()
+                                    },
+                                    type: 'POST'
+                                });
+                            }
+                        });
+                console.log("new marker %O", staticMarker);
+                google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
+                if (staticMarker.fingrId !== undefined) {
+                    markers[staticMarker.fingrId] = staticMarker;
+                }
+                return staticMarker;
+            }
+
+            function makeMeMarker(data) {
+                console.log("making me marker for %O", data);
+                var latLng = new google.maps.LatLng(data.latitude, data.longitude);
+                var staticMarker = new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            title: data.name,
+                            draggable: true,
+                            icon: icons.default,
                             fingrId: data.id,
                             fingrDrag: function(event) {
                                 $.ajax({
@@ -142,8 +200,8 @@
                     case Modes.STATIC:
                         var staticMarker = makeStaticMarker({
                             name: $('#static-marker-name').val(),
-                            lat: event.latLng.lat(),
-                            lng: event.latLng.lng()
+                            latitude: event.latLng.lat(),
+                            longitude: event.latLng.lng()
                         });
                         // we want to send to the server the name and latLng of our static marker to
                         // save for next visit/friends to see
@@ -162,6 +220,23 @@
                         break;
                     case Modes.EVENT:
                         break;
+                    case Modes.ME:
+                        var meMarker = makeMeMarker({
+                            name: "Me",
+                            lat: event.latLng.lat(),
+                            lng: event.latLng.lng()
+                        });
+                        $.ajax({
+                            url: "{% url 'map.views.set_my_marker' %}",
+                            data: {
+                                lat: meMarker.position.lat(),
+                                lng: meMarker.position.lng()
+                            },
+                            type: 'POST'
+                        }).done(function(response) {
+                            var r = JSON.parse(response);
+                        });
+                        break;
                     default:
                         console.log("no active thing to do, ignore click");
                 }
@@ -174,6 +249,22 @@
         function staticMode() {
             // the next click on the map will create a new static location marker
             currentMode = Modes.STATIC;
+        }
+
+        function meMode() {
+            // the next click on the map will set my current location for my friends to see
+            currentMode = Modes.ME;
+        }
+
+        function selectMarker(marker) {
+            if (selectedMarker !== undefined) {
+                selectedMarker.setIcon(icons.default);
+            }
+            if (markers[marker] !== undefined) {
+                selectedMarker = markers[marker];
+                selectedMarker.setIcon(icons.selected);
+                map.panTo(selectedMarker.position);
+            }
         }
     </script>
 {% endblock %}

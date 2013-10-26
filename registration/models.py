@@ -1,7 +1,11 @@
 from django.contrib.auth.models import User
 from django.db import models
 from main.models import Message
-from map.models import StaticLocation
+from map.models import StaticLocation, UserLocation
+
+
+UNSW_LATITUDE = -33.917473
+UNSW_LONGITUDE = 151.23103
 
 
 class FingrUser(models.Model):
@@ -23,6 +27,7 @@ class FingrUser(models.Model):
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
     static_locations = models.ManyToManyField(StaticLocation)
+    my_location = models.ForeignKey(UserLocation)
 
     def _get_username(self):
         return self.django_user.username
@@ -68,7 +73,10 @@ def create_fingr_user(email, password, **kwargs):
     # the django create_user method automatically saves it in the database for us
     django_user = User.objects.create_user(username=email, email=email, password=password)
 
-    fingr_user = FingrUser(django_user=django_user, username=email, email=email, **kwargs)
+    initial_location = UserLocation(latitude=UNSW_LATITUDE, longitude=UNSW_LONGITUDE)
+    initial_location.save()
+
+    fingr_user = FingrUser(django_user=django_user, username=email, email=email, my_location=initial_location, **kwargs)
     fingr_user.save()
 
 
