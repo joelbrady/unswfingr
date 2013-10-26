@@ -9,23 +9,49 @@ from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
 from registration.models import user_to_fingr
 from registration.forms import FingrUserForm
+from django.contrib.auth.decorators import login_required
 
-def view_profile(request):
+
+@login_required
+def view_profile(request, target_user_pk):
 
     if request.user.is_authenticated():
         f_user = user_to_fingr(request.user)
 
+        profile = Profile.objects.get(fingr_user=f_user)
+
+        # Trying to print courses in a graphical way.
+        #for course in profile.courses.all():
+        #    print course.course_code
+        #    print course.course_name
+        #
+        #
+        #ordered_courses = { }
+        #for course in profile.courses.all():
+        #    profile.courses
+        #    ordered_courses[course.course_code] = "test"
+        #    print course.course_code
+        #    print ordered_courses[course.course_code]
+        #
+        #    for lecture in course.lectures.all():
+        #        ordered_courses[lecture.choices_of_days] = course.course_code + " lecture"
+        #
+        #for ordered_course in ordered_courses
+        #    print
+
         c = {'username': f_user.username,
-             'email': f_user.email,
-             'first_name':f_user.first_name,
-             'last_name': f_user.last_name,
-            }
+         'email': f_user.email,
+         'first_name':f_user.first_name,
+         'last_name': f_user.last_name,
+         'courses' : profile.courses.all(),
+        }
+
         return render_to_response('profile.html', c, context_instance = RequestContext(request))
     else:
 
         return render_to_response('need_to_login.html')
 
-
+@login_required
 def edit_profile(request):
 
 
@@ -57,7 +83,7 @@ def edit_profile(request):
 
         return render_to_response('need_to_login.html')
 
-
+@login_required
 def edit_course(request):
     #This class is used to make empty formset forms required
     # See http://stackoverflow.com/questions/2406537/django-formsets-make-first-required/4951032#4951032

@@ -6,16 +6,19 @@
 
     </head>
     <body>
-          <center>
-              <h1> <center> {{ first_name }} {{ last_name }} Profile </center></h1>
-              <ul>
-              <p> User Name : {{ username }} </p>
-              </ul>
-          </center>
+        <center>
+            <h1> <center> {{ first_name }} {{ last_name }} Profile </center></h1>
+            <ul>
+                <p> User Name : {{ username }} </p>
+                {% for course in courses %}
+                    <p> {{course.course_name}} </p>
+                {% endfor %}
+            </ul>
+        </center>
 
-          <p>
-              <a href="{% url 'profile.views.edit_profile' %}"> Edit Profile </a>
-          </p>
+        <p>
+        <a href="{% url 'profile.views.edit_profile' %}"> Edit Profile </a>
+        </p>
 
     </body>
 {% endblock %}
