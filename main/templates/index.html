@@ -17,7 +17,7 @@
     {% for user in userlist %}
         User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username }}</a><br>
     {% endfor %}
-    <a href="{% url 'main.views.view_map' %}">Map</a><br>
+    <a href="{% url 'map.views.view_map' %}">Map</a><br>
     <a href="{% url 'main.views.logout' %}">Logout</a>
     {% else %}
     Click <a href="{% url 'main.views.login' %}">here</a> to login.<br>

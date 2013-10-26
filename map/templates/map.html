@@ -97,7 +97,7 @@
             map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
             $.ajax({
-                url: "{% url 'main.views.get_static_markers' %}",
+                url: "{% url 'map.views.get_static_markers' %}",
             }).done(function(response) {
                 var initialData = $.parseJSON(response);
                 for (var i = 0; i < initialData.length; i++) {
@@ -118,7 +118,7 @@
                             fingrId: data.id,
                             fingrDrag: function(event) {
                                 $.ajax({
-                                    url: "{% url 'main.views.update_static_marker' %}",
+                                    url: "{% url 'map.views.update_static_marker' %}",
                                     data: {
                                         id: this.fingrId,
                                         lat: event.latLng.lat(),
@@ -148,7 +148,7 @@
                         // we want to send to the server the name and latLng of our static marker to
                         // save for next visit/friends to see
                         $.ajax({
-                            url: "{% url 'main.views.new_static_marker' %}",
+                            url: "{% url 'map.views.new_static_marker' %}",
                             data: {
                                 name: staticMarker.title,
                                 lat: staticMarker.position.lat(),

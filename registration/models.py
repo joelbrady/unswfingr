@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
-from main.models import Message, StaticLocation
-
-
+from main.models import Message
+from map.models import StaticLocation
 
 
 class FingrUser(models.Model):
@@ -24,8 +23,6 @@ class FingrUser(models.Model):
     available = models.BooleanField(default=False)
     messages = models.ManyToManyField(Message)
     static_locations = models.ManyToManyField(StaticLocation)
-
-
 
     def _get_username(self):
         return self.django_user.username
