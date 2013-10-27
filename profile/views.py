@@ -16,12 +16,9 @@ import itertools
 
 
 #remove foreign  key, change around so that ufingr has profile field
-#fix choice of days
-#lecture name
 #availability, Property ( Fingr user fo r friends list)
 #add drop down
 # make lecture, lab and tutes optional
-# 404 for profiles that dont exist ( django does this)
 # create super user, then new user, profile goes to wrong pages.
 # scrub the input data for courses.
 # start time and end time for courses

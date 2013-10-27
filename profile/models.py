@@ -61,7 +61,7 @@ class Profile(models.Model):
     def __unicode__(self):
         # this method is used when an instance of this
         # is printed in the interactive shell
-        return self.name
+        return self.fingr_user.username
 
 
 class Lecture(models.Model):
