@@ -1,22 +1,27 @@
 from itertools import chain
+import datetime
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.forms.util import ErrorList
 from django.shortcuts import render, redirect
-from main.forms import LoginForm, StatusForm, MessageForm, SearchForm
+from main.forms import LoginForm, StatusForm, MessageForm, SearchForm, EventForm
 from main.middleware import send_message
-from main.models import Message
+from main.models import Message, Event
 from registration.models import FingrUser, user_to_fingr
-
 
 def index(request):
     context = {}
 
     if request.user.is_authenticated():
         user = user_to_fingr(request.user)
-
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
         context['hasOnlineFriends'] = user.friends_list.filter(available=True).count
+
+
+
+
 
     return render(request, 'index.html', context)
 
@@ -145,11 +150,13 @@ def add_friend(request, target_user_pk):
     if target_user.username != request.user.username:
         user.friends.add(target_user)
         target_user.friends.add(user)
+
+
         notify_specific_friend(target_user, user, str(target_user.username) + ' has added you as a friend.')
 
     else:
         print "user tried to add themselves"
-    # ignore a user trying to add themselves
+        # ignore a user trying to add themselves
     return redirect('main.views.index')
 
 
@@ -187,23 +194,23 @@ def set_status(request):
 def inbox(request):
     context = {}
     if request.user.is_authenticated():
-            context['authenticated'] = True
+        context['authenticated'] = True
 
-            user = user_to_fingr(request.user)
-            conversations = user.messages_list.filter(type=Message.MESSAGE)
-
-
-            people = set()
-            for conversation in conversations:
-                if conversation.sentFrom != user:
-                    people.add(conversation.sentFrom)
-
-                if conversation.sentTo != user:
-                     people.add(conversation.sentTo)
+        user = user_to_fingr(request.user)
+        conversations = user.messages_list.filter(type=Message.MESSAGE)
 
 
+        people = set()
+        for conversation in conversations:
+            if conversation.sentFrom != user:
+                people.add(conversation.sentFrom)
 
-            context['conversations'] = people
+            if conversation.sentTo != user:
+                people.add(conversation.sentTo)
+
+
+
+        context['conversations'] = people
     else:
         return redirect('main.views.login')
     return render(request, 'inbox.html', context)
@@ -237,6 +244,68 @@ def search(request):
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 
+
+@login_required
+def events(request):
+    context = {}
+    user = user_to_fingr(request.user)
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+
+            currTime = datetime.datetime.now()
+
+            good = True
+            #we need to do some hacky stuff and set the year, because otherwise it might do 1889 which is an error
+            startTime = form.cleaned_data['timeStart']
+            endTime = form.cleaned_data['timeEnd']
+            startTime = startTime.replace(year=currTime.year)
+            endTime = endTime.replace(year=currTime.year)
+
+            #HOW DO I VALIDATE PROPERLY?
+            if endTime <= startTime:
+                errors = form._errors.setdefault("timeEnd", ErrorList())
+                errors.append(u"End time must be after Start time")
+                good = False
+            if form.cleaned_data['date']< currTime.date():
+                errors = form._errors.setdefault("date", ErrorList())
+                errors.append(u"Day must be today or in the future")
+                good = False
+
+            if good:
+                event = Event(title=form.cleaned_data['title'], owner=user, date=form.cleaned_data['date'],
+                              timeStart=currTime,timeEnd=currTime, description=form.cleaned_data['description']
+                )
+                event.save()
+                notify_all_friends(user, "You have been invited to " + str(user.full_name) +"'s event: " + str(event.title))
+
+
+
+
+
+    else:
+        form = EventForm()
+
+    context['form'] = form
+
+
+    userEvents = Event.objects.filter(owner=user)
+    context['userEvents'] = userEvents
+
+
+    friendsEvents = Event.objects.filter(owner__in=user.friends_list)
+
+    context['friendEvents'] = friendsEvents
+
+    return render(request, 'events.html', context)
+
+@login_required
+def delete_event(request, event_id):
+    event = Event.objects.filter(pk=event_id)[0]
+    user = user_to_fingr(request.user)
+    if event.owner == user:
+        event.delete()
+    return redirect('main.views.events')
 
 
 def activate(request):

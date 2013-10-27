@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+{% if userEvents %}
+
+<h2> Events:</h2>
+{% for event in userEvents %}
+    <div class="highlight">
+        {% if event.owner == fingr_user %}
+            <div style="text-align:right">
+                <a href="{% url 'main.views.delete_event' event.pk %}">Cancel this event</a>
+            </div>
+        {% endif %}
+        <h3>{{event.title}}</h3>
+        <dl class="dl-horizontal">
+            <dt>Created by</dt> <dd><a href="{% url 'profile.views.view_profile' event.owner.pk %}">{{event.owner.full_name}}</a></dd>
+            <dt>Date <span class="glyphicon glyphicon-calendar" /></dt> <dd>{{event.date}}</dd>
+            <dt>Starts <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeStart|date:"h:m a"}}</dd>
+            <dt>Ends <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeEnd|date:"h:m a"}}</dd>
+            <dt>Description</dt> <dd>{{event.description}}</dd>
+        </dl>
+
+
+    </div>
+{% endfor %}
+{% else %}
+<h3>You have not created any events</h3>
+{% endif %}
+<hr />
+
+{% if friendEvents %}
+        <h2>Invited to:</h2>
+
+        {% for event in friendEvents %}
+    <div class="highlight">
+
+        <h3>{{event.title}}</h3>
+        <dl class="dl-horizontal">
+            <dt>Created by</dt> <dd><a href="{% url 'profile.views.view_profile' event.owner.pk %}">{{event.owner.full_name}}</a></dd>
+            <dt>Date <span class="glyphicon glyphicon-calendar" /></dt> <dd>{{event.date}}</dd>
+            <dt>Starts <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeStart|date:"h:m a"}}</dd>
+            <dt>Ends <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeEnd|date:"h:m a"}}</dd>
+            <dt>Description</dt> <dd>{{event.description}}</dd>
+
+        </dl>
+
+    </div>
+{% endfor %}
+{% else %}
+        You haven't been invited to anything :(
+{% endif %}
+        <hr />
+
+
+<form class="form-horizontal" method="post" action="">
+    <h4 class=form-signin-heading">Add Event <span class="glyphicon glyphicon-plus" /></h4>
+
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div class="form-group">
+        <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+        <div class="col-lg-10">
+            {% load widget_tweaks %}
+
+            {% render_field field class="form-control" %}
+        </div>
+        <span class="text-danger">{{ field.errors }}</span>
+
+
+    </div>
+
+    {% endfor %}
+
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+
+
+            <button class="btn btn-primary" type="submit">Create Event</button>
+
+        </div>
+    </div>
+
+</form>
+
+
+{% endblock %}

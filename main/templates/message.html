@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if valid %}
-        <h3>Conversation with {{talking_to.first_name}} {{talking_to.last_name}}</h3>
+        <h3>Conversation with {{talking_to.full_name}}</h3>
         <hr />
         {% if conversation %}
 
@@ -17,7 +17,7 @@
 
                 {% else %}
                 <div class="highlight highlight-left">
-                <strong class="text-primary">{{message.sentFrom.first_name}} {{message.sentFrom.last_name}}</strong><br />
+                <strong class="text-primary">{{message.sentFrom.full_name}}</strong><br />
                 {{message.text}} <br /><span class="text-muted">{{message.time}}</span>
 
                 {% endif %}
