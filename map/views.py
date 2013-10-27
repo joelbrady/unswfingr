@@ -131,6 +131,10 @@ def set_my_marker(request):
 
     return HttpResponse(json.dumps({'success': True}))
 
+
 @login_required
 def get_my_marker(request):
-    return HttpResponse(json.dumps({'success': False}))
+    user = user_to_fingr(request.user)
+    assert user is not None
+
+    return HttpResponse(json.dumps(model_to_dict(user.my_location)))

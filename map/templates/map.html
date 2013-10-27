@@ -10,10 +10,10 @@
     <div id="map-canvas" style="width: 100%; height: 500px;"></div>
     <div id="map-buttons">
         Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
+        Your current location is shown in blue.<br>
         <input id="static-marker-name" type="text"><br>
         <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
         <button id="new-event" type="button" onclick="">Add new event</button>
-        <button id="my-location" type="button" onclick="meMode()">Set your location</button>
     </div>
     <div id="user-static-markers" style="display: inline-block;">
         <h3>My Locations:</h3>
@@ -132,7 +132,11 @@
                 }
             });
 
-            // TODO get me marker
+            $.ajax({
+                url: "{% url 'map.views.get_my_marker' %}",
+            }).done(function(response) {
+                makeMeMarker($.parseJSON(response));
+            });
 
             function makeStaticMarker(data) {
                 console.log("making marker for %O", data);
@@ -143,6 +147,7 @@
                             title: data.name,
                             draggable: true,
                             icon: icons.default,
+                            fingrType: data.type,
                             fingrId: data.id,
                             fingrDrag: function(event) {
                                 $.ajax({
@@ -153,6 +158,11 @@
                                         lng: event.latLng.lng()
                                     },
                                     type: 'POST'
+                                }).done(function(response) {
+                                    var r = $.parseJSON(response);
+                                    if (!r.success) {
+                                        console.log("error posting my marker: %O", r);
+                                    }
                                 });
                             }
                         });
@@ -167,18 +177,18 @@
             function makeMeMarker(data) {
                 console.log("making me marker for %O", data);
                 var latLng = new google.maps.LatLng(data.latitude, data.longitude);
-                var staticMarker = new google.maps.Marker({
+                var newMeMarker = new google.maps.Marker({
                             position: latLng,
                             map: map,
                             title: data.name,
                             draggable: true,
-                            icon: icons.default,
+                            icon: icons.me,
+                            fingrType: data.type,
                             fingrId: data.id,
                             fingrDrag: function(event) {
                                 $.ajax({
-                                    url: "{% url 'map.views.update_static_marker' %}",
+                                    url: "{% url 'map.views.set_my_marker' %}",
                                     data: {
-                                        id: this.fingrId,
                                         lat: event.latLng.lat(),
                                         lng: event.latLng.lng()
                                     },
@@ -186,12 +196,10 @@
                                 });
                             }
                         });
-                console.log("new marker %O", staticMarker);
-                google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
-                if (staticMarker.fingrId !== undefined) {
-                    markers[staticMarker.fingrId] = staticMarker;
-                }
-                return staticMarker;
+                console.log("new marker %O", meMarker);
+                google.maps.event.addDomListener(newMeMarker, 'dragend', newMeMarker.fingrDrag);
+                meMarker = newMeMarker
+                return newMeMarker;
             }
 
             function clickOnMap(event) {
@@ -201,7 +209,8 @@
                         var staticMarker = makeStaticMarker({
                             name: $('#static-marker-name').val(),
                             latitude: event.latLng.lat(),
-                            longitude: event.latLng.lng()
+                            longitude: event.latLng.lng(),
+                            type: currentMode
                         });
                         // we want to send to the server the name and latLng of our static marker to
                         // save for next visit/friends to see
@@ -220,23 +229,6 @@
                         break;
                     case Modes.EVENT:
                         break;
-                    case Modes.ME:
-                        var meMarker = makeMeMarker({
-                            name: "Me",
-                            lat: event.latLng.lat(),
-                            lng: event.latLng.lng()
-                        });
-                        $.ajax({
-                            url: "{% url 'map.views.set_my_marker' %}",
-                            data: {
-                                lat: meMarker.position.lat(),
-                                lng: meMarker.position.lng()
-                            },
-                            type: 'POST'
-                        }).done(function(response) {
-                            var r = JSON.parse(response);
-                        });
-                        break;
                     default:
                         console.log("no active thing to do, ignore click");
                 }
@@ -249,11 +241,6 @@
         function staticMode() {
             // the next click on the map will create a new static location marker
             currentMode = Modes.STATIC;
-        }
-
-        function meMode() {
-            // the next click on the map will set my current location for my friends to see
-            currentMode = Modes.ME;
         }
 
         function selectMarker(marker) {
