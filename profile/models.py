@@ -65,8 +65,7 @@ class Profile(models.Model):
 
 
 class Lecture(models.Model):
-    lecture_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
+    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 
@@ -76,8 +75,7 @@ class Lecture(models.Model):
         return 'Lecture model'
 
 class Tutorial(models.Model):
-    tutorial_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
+    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 
@@ -87,8 +85,7 @@ class Tutorial(models.Model):
         return 'Tutorial model'
 
 class Labs(models.Model):
-    lab_name = models.CharField(max_length=100)
-    choices_of_days = models.CharField(max_length=3,choices=days,default='MON')
+    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
     start_time = models.CharField(max_length=2,choices=times,default='9')
     end_time = models.CharField(max_length=2,choices=times,default='10')
 
