@@ -172,7 +172,8 @@ def edit_profile(request):
 
 
         profile_form = FingrUserForm(initial= {'first_name': f_user.first_name ,
-                                             'last_name': f_user.last_name})
+                                             'last_name': f_user.last_name,
+                                             'visibility': f_user.visibility},)
 
         if request.method == "POST":
 
@@ -181,6 +182,7 @@ def edit_profile(request):
 
                 f_user.first_name = profile_form.cleaned_data['first_name']
                 f_user.last_name = profile_form.cleaned_data['last_name']
+                f_user.visibility = profile.form.cleaned_data['visibility']
                 f_user.save()
 
 

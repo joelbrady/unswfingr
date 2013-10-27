@@ -30,6 +30,15 @@ class FingrUser(models.Model):
     static_locations = models.ManyToManyField(StaticLocation)
     profile = models.ForeignKey(Profile, unique=True)
     my_location = models.ForeignKey(UserLocation)
+    visibility_hide = 'None'
+    visibility_friends = 'Friends'
+    visibility_all = 'All'
+    visibility_choices = (
+        (visibility_hide, 'None'),
+        (visibility_friends, 'Friends'),
+        (visibility_all, 'All'),
+    )
+    visibility = models.CharField(max_length=7, choices=visibility_choices,default=visibility_all)
 
     def _get_username(self):
         return self.django_user.username
