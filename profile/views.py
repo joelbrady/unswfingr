@@ -14,7 +14,15 @@ from django.contrib.auth.decorators import login_required
 import itertools
 
 
-
+#remove foreign  key, change around so that ufingr has profile field
+#fix choice of days
+#lecture name
+#fix header
+#availability, Property ( Fingr user fo r friends list)
+#add drop down
+# make lab and tutes optional
+# 404 for profiles that dont exist ( django does this)
+# create super user, then new user, profile goes to wrong pages.
 
 @login_required
 def view_profile(request, target_user_pk):
@@ -292,7 +300,7 @@ def edit_course(request):
                 #lab_day_time_formset.errors
 
             # Not in the else.
-            return render_to_response('add_courses.html')
+            return render_to_response('add_courses.html', context_instance = RequestContext(request))
 
         course_formset = CourseFormSet(prefix='course')
         lecture_formset = LectureFormSet(prefix='lecture')

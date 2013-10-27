@@ -20,7 +20,7 @@ Edit Profile
         </h1>
     <span class="glyphicon glyphicon-ok"></span> Friends
     {% else %}
-        {% if user.pk != target_user_pk %}
+        {% if fingr_user.pk != target_user_pk %}
         <a href="{% url 'main.views.add_friend' target_user_pk %}">
         <button type="button" class="btn btn-success">Add Friend <span class="glyphicon glyphicon-plus"></span>
         </button>
@@ -52,7 +52,7 @@ Edit Profile
         {% endif %}
 
     </ul>
-    {% if is_friend == True or user.pk == target_user_pk %}
+    {% if is_friend == True or fingr_user.pk == target_user_pk %}
 
 
     {% ifequal monday|length 1  %}
@@ -60,7 +60,7 @@ Edit Profile
     {% ifequal wednesday|length 1 %}
     {% ifequal thursday|length 1 %}
     {% ifequal friday|length 1 %}
-    {%ifequal target_user_pk user.pk %}
+    {%ifequal target_user_pk fingr_user.pk %}
     <p> <b> Please add timetable.</b> </p>
     {% else %}
     <p> <b> No timetable added.</b></p>
@@ -215,7 +215,7 @@ Edit Profile
 
 
 
-{% if user.pk == target_user_pk %}
+{% if fingr_user.pk == target_user_pk %}
 <p>
     <a href="{% url 'profile.views.edit_profile' %}"> Edit Profile </a>
 </p>
