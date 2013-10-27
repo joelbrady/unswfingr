@@ -1,6 +1,612 @@
 [
 {
     "pk": 1, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "permission", 
+        "name": "permission", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 2, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 3, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 4, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "contenttype", 
+        "name": "content type", 
+        "app_label": "contenttypes"
+    }
+},
+{
+    "pk": 5, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "session", 
+        "name": "session", 
+        "app_label": "sessions"
+    }
+},
+{
+    "pk": 6, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "logentry", 
+        "name": "log entry", 
+        "app_label": "admin"
+    }
+},
+{
+    "pk": 7, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "fingruser", 
+        "name": "fingr user", 
+        "app_label": "registration"
+    }
+},
+{
+    "pk": 8, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "day_times", 
+        "name": "day_ times", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 9, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "profile", 
+        "name": "profile", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 10, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "lecture", 
+        "name": "lecture", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 11, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "tutorial", 
+        "name": "tutorial", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 12, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "labs", 
+        "name": "labs", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 13, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "course", 
+        "name": "course", 
+        "app_label": "profile"
+    }
+},
+{
+    "pk": 14, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "staticlocation", 
+        "name": "static location", 
+        "app_label": "map"
+    }
+},
+{
+    "pk": 15, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "userlocation", 
+        "name": "user location", 
+        "app_label": "map"
+    }
+},
+{
+    "pk": 16, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "message", 
+        "name": "message", 
+        "app_label": "main"
+    }
+},
+{
+    "pk": 1, 
+    "model": "profile.profile", 
+    "fields": {
+        "courses": []
+    }
+},
+{
+    "pk": 2, 
+    "model": "profile.profile", 
+    "fields": {
+        "courses": []
+    }
+},
+{
+    "pk": 1, 
+    "model": "map.userlocation", 
+    "fields": {
+        "latitude": -33.917473, 
+        "longitude": 151.23103
+    }
+},
+{
+    "pk": 2, 
+    "model": "map.userlocation", 
+    "fields": {
+        "latitude": -33.917473, 
+        "longitude": 151.23103
+    }
+},
+{
+    "pk": 1, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_permission", 
+        "name": "Can add permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_permission", 
+        "name": "Can change permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 3, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_permission", 
+        "name": "Can delete permission", 
+        "content_type": 1
+    }
+},
+{
+    "pk": 4, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_group", 
+        "name": "Can add group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 5, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_group", 
+        "name": "Can change group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 6, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_group", 
+        "name": "Can delete group", 
+        "content_type": 2
+    }
+},
+{
+    "pk": 7, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_user", 
+        "name": "Can add user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 8, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_user", 
+        "name": "Can change user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 9, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_user", 
+        "name": "Can delete user", 
+        "content_type": 3
+    }
+},
+{
+    "pk": 10, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_contenttype", 
+        "name": "Can add content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 11, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_contenttype", 
+        "name": "Can change content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 12, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_contenttype", 
+        "name": "Can delete content type", 
+        "content_type": 4
+    }
+},
+{
+    "pk": 13, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_session", 
+        "name": "Can add session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 14, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_session", 
+        "name": "Can change session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 15, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_session", 
+        "name": "Can delete session", 
+        "content_type": 5
+    }
+},
+{
+    "pk": 16, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_logentry", 
+        "name": "Can add log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 17, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_logentry", 
+        "name": "Can change log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 18, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_logentry", 
+        "name": "Can delete log entry", 
+        "content_type": 6
+    }
+},
+{
+    "pk": 19, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_fingruser", 
+        "name": "Can add fingr user", 
+        "content_type": 7
+    }
+},
+{
+    "pk": 20, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_fingruser", 
+        "name": "Can change fingr user", 
+        "content_type": 7
+    }
+},
+{
+    "pk": 21, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_fingruser", 
+        "name": "Can delete fingr user", 
+        "content_type": 7
+    }
+},
+{
+    "pk": 22, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_day_times", 
+        "name": "Can add day_ times", 
+        "content_type": 8
+    }
+},
+{
+    "pk": 23, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_day_times", 
+        "name": "Can change day_ times", 
+        "content_type": 8
+    }
+},
+{
+    "pk": 24, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_day_times", 
+        "name": "Can delete day_ times", 
+        "content_type": 8
+    }
+},
+{
+    "pk": 25, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_profile", 
+        "name": "Can add profile", 
+        "content_type": 9
+    }
+},
+{
+    "pk": 26, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_profile", 
+        "name": "Can change profile", 
+        "content_type": 9
+    }
+},
+{
+    "pk": 27, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_profile", 
+        "name": "Can delete profile", 
+        "content_type": 9
+    }
+},
+{
+    "pk": 28, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_lecture", 
+        "name": "Can add lecture", 
+        "content_type": 10
+    }
+},
+{
+    "pk": 29, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_lecture", 
+        "name": "Can change lecture", 
+        "content_type": 10
+    }
+},
+{
+    "pk": 30, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_lecture", 
+        "name": "Can delete lecture", 
+        "content_type": 10
+    }
+},
+{
+    "pk": 31, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_tutorial", 
+        "name": "Can add tutorial", 
+        "content_type": 11
+    }
+},
+{
+    "pk": 32, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_tutorial", 
+        "name": "Can change tutorial", 
+        "content_type": 11
+    }
+},
+{
+    "pk": 33, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_tutorial", 
+        "name": "Can delete tutorial", 
+        "content_type": 11
+    }
+},
+{
+    "pk": 34, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_labs", 
+        "name": "Can add labs", 
+        "content_type": 12
+    }
+},
+{
+    "pk": 35, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_labs", 
+        "name": "Can change labs", 
+        "content_type": 12
+    }
+},
+{
+    "pk": 36, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_labs", 
+        "name": "Can delete labs", 
+        "content_type": 12
+    }
+},
+{
+    "pk": 37, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_course", 
+        "name": "Can add course", 
+        "content_type": 13
+    }
+},
+{
+    "pk": 38, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_course", 
+        "name": "Can change course", 
+        "content_type": 13
+    }
+},
+{
+    "pk": 39, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_course", 
+        "name": "Can delete course", 
+        "content_type": 13
+    }
+},
+{
+    "pk": 40, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_staticlocation", 
+        "name": "Can add static location", 
+        "content_type": 14
+    }
+},
+{
+    "pk": 41, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_staticlocation", 
+        "name": "Can change static location", 
+        "content_type": 14
+    }
+},
+{
+    "pk": 42, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_staticlocation", 
+        "name": "Can delete static location", 
+        "content_type": 14
+    }
+},
+{
+    "pk": 43, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_userlocation", 
+        "name": "Can add user location", 
+        "content_type": 15
+    }
+},
+{
+    "pk": 44, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_userlocation", 
+        "name": "Can change user location", 
+        "content_type": 15
+    }
+},
+{
+    "pk": 45, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_userlocation", 
+        "name": "Can delete user location", 
+        "content_type": 15
+    }
+},
+{
+    "pk": 46, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "add_message", 
+        "name": "Can add message", 
+        "content_type": 16
+    }
+},
+{
+    "pk": 47, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "change_message", 
+        "name": "Can change message", 
+        "content_type": 16
+    }
+},
+{
+    "pk": 48, 
+    "model": "auth.permission", 
+    "fields": {
+        "codename": "delete_message", 
+        "name": "Can delete message", 
+        "content_type": 16
+    }
+},
+{
+    "pk": 1, 
     "model": "auth.user", 
     "fields": {
         "username": "test@test.com", 
@@ -9,12 +615,12 @@
         "is_active": true, 
         "is_superuser": false, 
         "is_staff": false, 
-        "last_login": "2013-10-22T14:39:43.659Z", 
+        "last_login": "2013-10-27T05:49:04.907Z", 
         "groups": [], 
         "user_permissions": [], 
-        "password": "pbkdf2_sha256$10000$sI0PvJava0uv$k8blD10a20c8lZ+bDN7KZG5AGO4qK96vKPk7V0eD8+E=", 
+        "password": "pbkdf2_sha256$10000$tME3c9trGO7x$wgb9XQeU5s8xCCgUph5VwayZ/leiUG/mj93sEvLEGiY=", 
         "email": "test@test.com", 
-        "date_joined": "2013-10-22T14:39:43.659Z"
+        "date_joined": "2013-10-27T05:48:24.466Z"
     }
 },
 {
@@ -27,74 +633,31 @@
         "is_active": true, 
         "is_superuser": false, 
         "is_staff": false, 
-        "last_login": "2013-10-22T14:39:51.822Z", 
+        "last_login": "2013-10-27T05:50:45.921Z", 
         "groups": [], 
         "user_permissions": [], 
-        "password": "pbkdf2_sha256$10000$sYpzU6FEHvI0$Xbabo2KCKPnrGp7I6p9bOCh28WFj94XNPbyYowFCQ8c=", 
+        "password": "pbkdf2_sha256$10000$JSGniDAkFrnt$F9kLG3udOERfafRbbN/OefMT92d7KkLhVk/muhztZOQ=", 
         "email": "test2@test.com", 
-        "date_joined": "2013-10-22T14:39:51.822Z"
+        "date_joined": "2013-10-27T05:50:27.124Z"
     }
 },
-{
-    "pk": 3, 
-    "model": "auth.user", 
-    "fields": {
-        "username": "test3@test.com", 
-        "first_name": "", 
-        "last_name": "", 
-        "is_active": true, 
-        "is_superuser": false, 
-        "is_staff": false, 
-        "last_login": "2013-10-22T14:40:01.852Z", 
-        "groups": [], 
-        "user_permissions": [], 
-        "password": "pbkdf2_sha256$10000$pzEfcakAjDgK$7fNIlsrEhsLikgTu73+l/6AaRq5lNOeOjpUVDqSrMU0=", 
-        "email": "test3@test.com", 
-        "date_joined": "2013-10-22T14:40:01.852Z"
-    }
-},
-
-{
-    "pk": 1,
-    "model": "profile.Profile",
-    "fields": {
-        "fingr_user": 1,
-        "courses": []
-    }
-},
-{
-    "pk": 2,
-    "model": "profile.Profile",
-    "fields": {
-        "fingr_user": 2,
-        "courses": []
-    }
-},
-{
-    "pk": 3,
-    "model": "profile.Profile",
-    "fields": {
-        "fingr_user": 3,
-        "courses": []
-    }
-},
-
-
 {
     "pk": 1, 
-    "model": "registration.fingruser",
+    "model": "registration.fingruser", 
     "fields": {
         "username": "test@test.com", 
         "available": false, 
-        "first_name": "", 
-        "last_name": "", 
+        "first_name": "User", 
+        "last_name": "Name", 
         "verified": true, 
         "messages": [], 
-        "v_code": "C8NYPX1KVA6SI3OUR54TOPPB6RG4MKFI6ZQVTEBCD8C3DMS867", 
+        "static_locations": [], 
+        "my_location": 1, 
+        "v_code": "6HARG215DXBIT471NH69QFUMS0ZGWD9LJMJY9MRXAAA6WEAEHX", 
+        "profile": 1, 
         "friends": [], 
         "email": "test@test.com", 
         "django_user": 1
-
     }
 },
 {
@@ -107,28 +670,13 @@
         "last_name": "", 
         "verified": true, 
         "messages": [], 
-        "v_code": "ME9FB2NOTS1YSL3TKSQ087W4M542JIHG22INPEJN6VQ0BPXZG1", 
+        "static_locations": [], 
+        "my_location": 2, 
+        "v_code": "72T7ZFN6EZ5TBC5UTPN86DJRZEV7DZFWM0YNGLX8LOU6BKXNA3", 
+        "profile": 2, 
         "friends": [], 
         "email": "test2@test.com", 
         "django_user": 2
-
-    }
-},
-{
-    "pk": 3, 
-    "model": "registration.fingruser", 
-    "fields": {
-        "username": "test3@test.com", 
-        "available": false, 
-        "first_name": "", 
-        "last_name": "", 
-        "verified": true, 
-        "messages": [], 
-        "v_code": "W3J9WHL27K8Q1JG3W89UMMTAAICG2B7RJS7W29SAHC2EAKQKY1", 
-        "friends": [], 
-        "email": "test3@test.com", 
-        "django_user": 3
-
     }
 }
 ]

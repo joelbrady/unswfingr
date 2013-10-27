@@ -229,13 +229,25 @@ def friends(request):
 def search(request):
     context = {}
     if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
         context['authenticated'] = True
         # user is already searching
         if request.POST:
             form = SearchForm(request.POST)
             # display found users
             if form.is_valid():
-                context['userlist'] = FingrUser.objects.filter(username__contains=form.cleaned_data['search'])
+                # all users
+                unfiltered = (FingrUser.objects.filter(username__contains=form.cleaned_data['search']) | FingrUser.objects.filter(first_name__contains=form.cleaned_data['search']) | FingrUser.objects.filter(last_name__contains=form.cleaned_data['search']))
+                # set(chain(...)) joins querysets and uniques them
+                # http://stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+                # users without extreme privacy
+                visible = unfiltered.exclude(visibility="None")
+                friends = {}
+                for u in visible:
+                    if (u.visibility=="Friends"):
+                        friends = set(chain(friends, visible.filter(friends=f_user)))
+                all = unfiltered.filter(visibility="All")
+                context['userlist'] = set(chain(all, friends))
                 return render(request, 'search.html', context)
             else:
                 return render(request, 'search.html', context)

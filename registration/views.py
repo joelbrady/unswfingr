@@ -20,9 +20,6 @@ def register(request):
 
             verification(form.cleaned_data['email'], user, request)
 
-            profile = Profile(fingr_user = user)
-            profile.save()
-
             return render(request, 'register_result.html', {'email': user.username})
     else:
         form = RegistrationForm()

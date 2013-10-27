@@ -21,7 +21,6 @@ class CheckMessagesMiddleware(object):
                         message.delete()
 
 
-
 def send_message(message_to, message_from, message_text, type_of_message):
     """
     This function allows you to send a notification to a particular user. Must specify a FingrUser to, from, as well as the message itself.
@@ -38,22 +37,17 @@ def send_message(message_to, message_from, message_text, type_of_message):
     message_from.messages.add(message)
 
 
-
-
-
-
-
-
 def fingr_user_everywhere(request):
     dictionary = {}
-    if (request.user):
-        if (request.user.is_authenticated()):
+    if request.user:
+        if request.user.is_authenticated():
             user = user_to_fingr(request.user)
-            dictionary['fingr_user'] = user
+            if user is not None:
+                dictionary['fingr_user'] = user
 
-            for message in user.messages_list:
-                if message.type == Message.MESSAGE and message.read == False and message.sentTo == user:
-                    dictionary['newMessage'] = True
+                for message in user.messages_list:
+                    if message.type == Message.MESSAGE and message.read == False and message.sentTo == user:
+                        dictionary['newMessage'] = True
 
 
 

@@ -11,19 +11,29 @@ from registration.models import user_to_fingr
 from registration.models import FingrUser
 from registration.forms import FingrUserForm
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 import itertools
 
 
+#remove foreign  key, change around so that ufingr has profile field
+
+#availability, Property ( Fingr user fo r friends list)
+#add drop down
+# make lecture, lab and tutes optional
+# scrub the input data for courses.
+# start time and end time for courses
 
 
 @login_required
 def view_profile(request, target_user_pk):
     print "target user" + target_user_pk
 
-    if request.user.is_authenticated():
-        f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
 
-        profile = Profile.objects.get(fingr_user=f_user)
+    if request.user.is_authenticated():
+        #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
+        f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
+
+        profile = f_user.profile
 
         # Trying to print courses in a graphical way.
         #for course in profile.courses.all():
@@ -39,40 +49,40 @@ def view_profile(request, target_user_pk):
         friday = ""
         for course in profile.courses.all():
             for lecture in course.lectures.all():
-                if lecture.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
-                elif lecture.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
-                elif lecture.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
-                elif lecture.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
-                elif lecture.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + lecture.lecture_name + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
+                if lecture.choice_of_day == "MON":
+                    monday = monday + course.course_code + "\t" +"Lecture" + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
+                elif lecture.choice_of_day == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" +"Lecture" + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
+                elif lecture.choice_of_day == "WED":
+                    wednesday = wednesday + course.course_code + "\t" +"Lecture" + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
+                elif lecture.choice_of_day == "THU":
+                    thursday = thursday + course.course_code + "\t" +"Lecture" + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
+                elif lecture.choice_of_day == "FRI":
+                    friday = friday + course.course_code + "\t" +"Lecture" + "\t" + lecture.start_time + "-" + lecture.end_time + "\n"
 
             for tutorial in course.tutorials.all() :
-                if tutorial.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
-                elif tutorial.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
-                elif tutorial.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
-                elif tutorial.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
-                elif tutorial.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + tutorial.tutorial_name + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
+                if tutorial.choice_of_day == "MON":
+                    monday = monday + course.course_code + "\t" + "Tutorial" + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
+                elif tutorial.choice_of_day == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" + "Tutorial" + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
+                elif tutorial.choice_of_day == "WED":
+                    wednesday = wednesday + course.course_code + "\t" + "Tutorial" + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
+                elif tutorial.choice_of_day == "THU":
+                    thursday = thursday + course.course_code + "\t" + "Tutorial" + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
+                elif tutorial.choice_of_day == "FRI":
+                    friday = friday + course.course_code + "\t" + "Tutorial" + "\t" + tutorial.start_time + "-" + tutorial.end_time + "\n"
 
             for lab in course.labs.all() :
-                if lab.choices_of_days == "MON":
-                    monday = monday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-"  + lab.end_time + "\n"
-                elif lab.choices_of_days == "TUE":
-                    tuesday = tuesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
-                elif lab.choices_of_days == "WED":
-                    wednesday = wednesday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
-                elif lab.choices_of_days == "THU":
-                    thursday = thursday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
-                elif lab.choices_of_days == "FRI":
-                    friday = friday + course.course_code + "\t" + lab.lab_name + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+                if lab.choice_of_day == "MON":
+                    monday = monday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-"  + lab.end_time + "\n"
+                elif lab.choice_of_day == "TUE":
+                    tuesday = tuesday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+                elif lab.choice_of_day == "WED":
+                    wednesday = wednesday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+                elif lab.choice_of_day == "THU":
+                    thursday = thursday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+                elif lab.choice_of_day == "FRI":
+                    friday = friday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
 
         monday = monday.strip("\n")
         tuesday = tuesday.strip("\n")
@@ -118,21 +128,13 @@ def view_profile(request, target_user_pk):
         iterator4 = itertools.count()
         iterator5 = itertools.count()
 
-        is_friend = 0
-
-
-
         me_f_user = user_to_fingr(request.user)
-        #print me_f_user.friends.get(pk=target_user_pk)
-        #if(request.user.pk == target_user_pk):
-        #    is_user = 1
 
         target_user_pk = int(target_user_pk)
         is_friend = False
         for friend in me_f_user.friends_list:
             if friend.pk == target_user_pk:
                 is_friend = True
-
 
 
 
@@ -152,6 +154,7 @@ def view_profile(request, target_user_pk):
             'iterator5': iterator5,
             'target_user_pk': target_user_pk,
             'is_friend' : is_friend,
+
             }
 
         return render_to_response('profile.html', c, context_instance = RequestContext(request))
@@ -169,7 +172,8 @@ def edit_profile(request):
 
 
         profile_form = FingrUserForm(initial= {'first_name': f_user.first_name ,
-                                             'last_name': f_user.last_name})
+                                             'last_name': f_user.last_name,
+                                             'visibility': f_user.visibility},)
 
         if request.method == "POST":
 
@@ -178,6 +182,7 @@ def edit_profile(request):
 
                 f_user.first_name = profile_form.cleaned_data['first_name']
                 f_user.last_name = profile_form.cleaned_data['last_name']
+                f_user.visibility = profile.form.cleaned_data['visibility']
                 f_user.save()
 
 
@@ -204,16 +209,17 @@ def edit_course(request):
 
 
     CourseFormSet = formset_factory(CourseForm, max_num=10, formset=RequiredFormSet)
-    LectureFormSet = formset_factory(LectureForm, max_num=10, formset=RequiredFormSet)
+    LectureFormSet = formset_factory(LectureForm, extra = 1, max_num=10, formset=RequiredFormSet)
     TutorialFormSet = formset_factory(TutorialForm, max_num=10, formset=RequiredFormSet)
     LaboratoryFormSet = formset_factory(LabForm, max_num=10, formset=RequiredFormSet)
     DayTimeFormSet = formset_factory(DayTimesForm,max_num=10, formset=RequiredFormSet)
 
     if request.user.is_authenticated():
-        user = user_to_fingr(request.user)
+        f_user = user_to_fingr(request.user)
 
 
-        profile = Profile.objects.get(fingr_user=user)
+        #profile = f_user.profile.objects.get(fingr_user=f_user)
+        profile = f_user.profile
 
 
         if request.method == 'POST': # If the form has been submitted...
@@ -227,7 +233,7 @@ def edit_course(request):
             #lab_day_time_formset = DayTimeFormSet(request.POST, prefix='lab_day_time')
 
 
-            if course_formset.is_valid() and lecture_formset.is_valid() and tutorial_formset.is_valid() and laboratory_formset.is_valid():
+            if course_formset.is_valid():
                 #course_formset.save()
                 #lecture_formset.save()
                 #lec_day_time_formset.save()
@@ -241,58 +247,44 @@ def edit_course(request):
                     course = Course(course_name = form.cleaned_data['course_name'] , course_code = form.cleaned_data['course_code'])
                     course.save()
 
+                if lecture_formset.is_valid():
+                    for lec_form in lecture_formset:
+                        lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
+                                          start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
+                        lecture.save()
+                        course.lectures.add(lecture)
 
+                if tutorial_formset.is_valid():
+                    for tut_form in tutorial_formset:
+                       tut = Tutorial(choice_of_day = tut_form.cleaned_data['choice_of_day'],
+                                      start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
+                       tut.save()
+                       course.tutorials.add(tut)
 
-
-                for lec_form in lecture_formset:
-                    lecture = Lecture(lecture_name = lec_form.cleaned_data['lecture_name'], choices_of_days = lec_form.cleaned_data['choices_of_days'],
-                                      start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
-                    lecture.save()
-                    course.lectures.add(lecture)
-
-                for tut_form in tutorial_formset:
-                   tut = Tutorial(tutorial_name = tut_form.cleaned_data['tutorial_name'], choices_of_days = tut_form.cleaned_data['choices_of_days'],
-                                  start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
-                   tut.save()
-                   course.tutorials.add(tut)
-
-                for lab_form in laboratory_formset:
-                   lab = Labs(lab_name = lab_form.cleaned_data['lab_name'], choices_of_days = lab_form.cleaned_data['choices_of_days'],
-                                  start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
-                   lab.save()
-                   course.labs.add(lab)
+                if laboratory_formset.is_valid():
+                    for lab_form in laboratory_formset:
+                       lab = Labs( choice_of_day = lab_form.cleaned_data['choice_of_day'],
+                                      start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
+                       lab.save()
+                       course.labs.add(lab)
 
 
                 profile.courses.add(course)
 
                 profile.save()
-
-
-
-                for course in profile.courses.all():
-                    print course.course_code
-                    print course.course_name
-
-                    for lecture in course.lectures.all():
-                        print lecture.lecture_name
-                        print lecture.start_time
-                        print lecture.end_time
-                        print lecture.choices_of_days
-
-
-
+                # Not in the else.
+                return render_to_response('add_courses.html', context_instance = RequestContext(request))
 
             else :
-                course_formset.errors
-                lecture_formset.errors
+                print course_formset.errors
+                print lecture_formset.errors
                 #lec_day_time_formset.errors
-                tutorial_formset.errors
+                print tutorial_formset.errors
                 #tut_day_time_formset.errors
-                laboratory_formset.errors
+                print laboratory_formset.errors
                 #lab_day_time_formset.errors
 
-            # Not in the else.
-            return render_to_response('add_courses.html')
+
 
         course_formset = CourseFormSet(prefix='course')
         lecture_formset = LectureFormSet(prefix='lecture')
