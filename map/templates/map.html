@@ -17,15 +17,20 @@
         <button id="my-auto-loc" type="button" onclick="myAutoLoc()">Auto set my location</button>
     </div>
     <div id="user-static-markers" style="display: inline-block;">
-        <h3>My Locations:</h3>
+        <h3>Locations:</h3>
         {% for marker in fingr_user.static_locations.all %}
             <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
         {% endfor %}
+        {% for friend in fingr_user.friends.all %}
+            {% for marker in friend.static_locations.all %}
+                <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
+            {% endfor %}
+        {% endfor %}
     </div>
-    <div id="friends-static-markers" style="display: inline-block; padding-left: 100px;">
+    <div id="friends-locations" style="display: inline-block; padding-left: 100px;">
         <h3>Friends' Locations:</h3>
         {% for friend in fingr_user.friends.all %}
-            <h4>{{ friend.email }}</h4>
+            {{ friend.first_name }} {{ friend.last_name }}
             {% for marker in friend.static_locations.all %}
                 {{ marker.name }}<br>
             {% endfor %}
@@ -113,6 +118,12 @@
                 url: "{% static 'images/marker_red.png' %}",
                 scaledSize: new google.maps.Size(23, 34),
                 anchor: new google.maps.Point(17, 34)
+            },
+
+            friend: {
+                url: "{% static 'images/marker_green.png' %}",
+                scaledSize: new google.maps.Size(23, 34),
+                anchor: new google.maps.Point(17, 34)
             }
         };
 
@@ -137,6 +148,15 @@
                 url: "{% url 'map.views.get_my_marker' %}",
             }).done(function(response) {
                 makeMeMarker($.parseJSON(response));
+            });
+
+            $.ajax({
+                url: "{% url 'map.views.get_friends_locations' %}",
+            }).done(function(response) {
+                var friendsLocations = $.parseJSON(response);
+                for (var i = 0; i < friendsLocations.length; i++) {
+                    makeFriendLocation(friendsLocations[i]);
+                }
             });
 
             function makeStaticMarker(data) {
@@ -201,6 +221,18 @@
                 google.maps.event.addDomListener(newMeMarker, 'dragend', newMeMarker.fingrDrag);
                 meMarker = newMeMarker
                 return newMeMarker;
+            }
+
+            function makeFriendLocation(data) {
+                console.log("friend location for %O", data);
+                var latLng = new google.maps.LatLng(data.latitude, data.longitude);
+                return new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            title: data.name,
+                            draggable: false,
+                            icon: icons.friend
+                });
             }
 
             function clickOnMap(event) {

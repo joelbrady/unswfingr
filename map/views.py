@@ -138,3 +138,11 @@ def get_my_marker(request):
     assert user is not None
 
     return HttpResponse(json.dumps(model_to_dict(user.my_location)))
+
+
+@login_required
+def get_friends_locations(request):
+    user = user_to_fingr(request.user)
+    assert user is not None
+
+    return HttpResponse(json.dumps(map(model_to_dict, [friend.my_location for friend in user.friends_list.all()])))
