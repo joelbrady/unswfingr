@@ -11,6 +11,7 @@ from registration.models import user_to_fingr
 from registration.models import FingrUser
 from registration.forms import FingrUserForm
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 import itertools
 
 
@@ -30,8 +31,10 @@ import itertools
 def view_profile(request, target_user_pk):
     print "target user" + target_user_pk
 
+
     if request.user.is_authenticated():
-        f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
+        #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
+        f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
 
         profile = Profile.objects.get(fingr_user=f_user)
 
