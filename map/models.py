@@ -7,10 +7,13 @@ class StaticLocation(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
 
-    def _json(self):
-        return json.dumps({'name': self.name, 'lat': self.latitude, 'lng': self.longitude, 'id': self.pk})
-
-    json = property(_json)
-
     def __unicode__(self):
         return self.name + " lat: " + str(round(self.latitude, 4)) + " long: " + str(round(self.longitude, 4))
+
+
+class UserLocation(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __unicode__(self):
+        return "lat: " + str(round(self.latitude, 4)) + " long: " + str(round(self.longitude, 4))
