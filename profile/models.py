@@ -1,5 +1,4 @@
 from django.db import models
-from registration.models import FingrUser
 
 days = (
 
@@ -49,8 +48,6 @@ class Day_Times(models.Model):
 
 
 class Profile(models.Model):
-    fingr_user = models.ForeignKey(FingrUser, unique=True)
-
     ## a profile has the person
     #username = models.CharField(max_length=100)
     #

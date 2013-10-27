@@ -16,10 +16,10 @@ import itertools
 
 
 #remove foreign  key, change around so that ufingr has profile field
+
 #availability, Property ( Fingr user fo r friends list)
 #add drop down
 # make lecture, lab and tutes optional
-# create super user, then new user, profile goes to wrong pages.
 # scrub the input data for courses.
 # start time and end time for courses
 
@@ -33,7 +33,7 @@ def view_profile(request, target_user_pk):
         #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
         f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
 
-        profile = Profile.objects.get(fingr_user=f_user)
+        profile = f_user.profile
 
         # Trying to print courses in a graphical way.
         #for course in profile.courses.all():
@@ -220,10 +220,11 @@ def edit_course(request):
     DayTimeFormSet = formset_factory(DayTimesForm,max_num=10, formset=RequiredFormSet)
 
     if request.user.is_authenticated():
-        user = user_to_fingr(request.user)
+        f_user = user_to_fingr(request.user)
 
 
-        profile = Profile.objects.get(fingr_user=user)
+        #profile = f_user.profile.objects.get(fingr_user=f_user)
+        profile = f_user.profile
 
 
         if request.method == 'POST': # If the form has been submitted...

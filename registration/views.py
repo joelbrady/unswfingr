@@ -22,6 +22,7 @@ def register(request):
 
             profile = Profile(fingr_user = user)
             profile.save()
+            user.profile = profile
 
             return render(request, 'register_result.html', {'email': user.username})
     else:

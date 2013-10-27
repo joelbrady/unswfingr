@@ -58,7 +58,6 @@
     "pk": 1,
     "model": "profile.Profile",
     "fields": {
-        "fingr_user": 1,
         "courses": []
     }
 },
@@ -66,7 +65,6 @@
     "pk": 2,
     "model": "profile.Profile",
     "fields": {
-        "fingr_user": 2,
         "courses": []
     }
 },
@@ -74,7 +72,6 @@
     "pk": 3,
     "model": "profile.Profile",
     "fields": {
-        "fingr_user": 3,
         "courses": []
     }
 },
@@ -93,7 +90,8 @@
         "v_code": "C8NYPX1KVA6SI3OUR54TOPPB6RG4MKFI6ZQVTEBCD8C3DMS867", 
         "friends": [], 
         "email": "test@test.com", 
-        "django_user": 1
+        "django_user": 1,
+        "profile": 1
 
     }
 },
@@ -110,7 +108,8 @@
         "v_code": "ME9FB2NOTS1YSL3TKSQ087W4M542JIHG22INPEJN6VQ0BPXZG1", 
         "friends": [], 
         "email": "test2@test.com", 
-        "django_user": 2
+        "django_user": 2,
+        "profile": 2
 
     }
 },
@@ -127,7 +126,8 @@
         "v_code": "W3J9WHL27K8Q1JG3W89UMMTAAICG2B7RJS7W29SAHC2EAKQKY1", 
         "friends": [], 
         "email": "test3@test.com", 
-        "django_user": 3
+        "django_user": 3,
+        "profile": 3
 
     }
 }
