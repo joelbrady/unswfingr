@@ -62,9 +62,16 @@ class Profile(models.Model):
 
 
 class Lecture(models.Model):
-    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
-    start_time = models.CharField(max_length=2,choices=times,default='9')
-    end_time = models.CharField(max_length=2,choices=times,default='10')
+    choice_of_day = models.CharField(max_length=3,choices=days)
+    start_time = models.CharField(max_length=2,choices=times)
+    end_time = models.CharField(max_length=2,choices=times)
+
+    def is_valid(self):
+        # run the parent validation first
+        valid = super(Lecture, self).is_valid()
+        # we're done now if not valid
+        if not valid:
+            return valid
 
     def __unicode__(self):
         # this method is used when an instance of this
@@ -72,9 +79,16 @@ class Lecture(models.Model):
         return 'Lecture model'
 
 class Tutorial(models.Model):
-    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
-    start_time = models.CharField(max_length=2,choices=times,default='9')
-    end_time = models.CharField(max_length=2,choices=times,default='10')
+    choice_of_day = models.CharField(max_length=3,choices=days)
+    start_time = models.CharField(max_length=2,choices=times)
+    end_time = models.CharField(max_length=2,choices=times)
+
+    def is_valid(self):
+        # run the parent validation first
+        valid = super(Tutorial, self).is_valid()
+        # we're done now if not valid
+        if not valid:
+            return valid
 
     def __unicode__(self):
         # this method is used when an instance of this
@@ -82,9 +96,16 @@ class Tutorial(models.Model):
         return 'Tutorial model'
 
 class Labs(models.Model):
-    choice_of_day = models.CharField(max_length=3,choices=days,default='MON')
-    start_time = models.CharField(max_length=2,choices=times,default='9')
-    end_time = models.CharField(max_length=2,choices=times,default='10')
+    choice_of_day = models.CharField(max_length=3,choices=days)
+    start_time = models.CharField(max_length=2,choices=times)
+    end_time = models.CharField(max_length=2,choices=times)
+
+    def is_valid(self):
+        # run the parent validation first
+        valid = super(Labs, self).is_valid()
+        # we're done now if not valid
+        if not valid:
+            return valid
 
     def __unicode__(self):
         # this method is used when an instance of this
