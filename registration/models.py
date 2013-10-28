@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
+from main.globals import UNSW_LATITUDE, UNSW_LONGITUDE
 from main.models import Message
 from map.models import StaticLocation
 from profile.models import Profile
 from map.models import UserLocation
-
-UNSW_LATITUDE = -33.917473
-UNSW_LONGITUDE = 151.23103
 
 
 class FingrUser(models.Model):
@@ -75,13 +73,7 @@ def user_to_fingr(django_user):
     """
     Converts a django auth User object to a FingrUser object
     """
-    found_users = FingrUser.objects.filter(django_user=django_user)
-    # a django User should map to exactly one FingrUser
-    assert len(found_users) <= 1
-    if len(found_users) == 1:
-        return found_users[0]
-    else:
-        return None
+    return FingrUser.objects.get(django_user=django_user)
 
 
 def create_fingr_user(email, password, **kwargs):

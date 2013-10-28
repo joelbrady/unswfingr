@@ -1,6 +1,6 @@
 import datetime
 from django.db import models
-from django.forms.extras import SelectDateWidget
+from main.globals import UNSW_LATITUDE, UNSW_LONGITUDE
 
 
 class Message(models.Model):
@@ -8,7 +8,6 @@ class Message(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     sentFrom = models.ForeignKey('registration.FingrUser', related_name='sent_from_fingruser')
     sentTo = models.ForeignKey('registration.FingrUser', related_name='sent_to_fingruser')
-
 
     read = models.BooleanField(default=False)
 
@@ -29,13 +28,17 @@ class Event(models.Model):
     timeStart = models.DateTimeField()
     timeEnd = models.DateTimeField()
     description = models.CharField(max_length=5000)
+    latitude = models.FloatField(default=UNSW_LATITUDE)
+    longitude = models.FloatField(default=UNSW_LONGITUDE)
 
     def _simpletime(time):
-
         return "1pm"
 
 
     timeStart_simple = _simpletime(timeStart)
     timeEnd_simple = _simpletime(timeEnd)
+
+    def __unicode__(self):
+        return self.title + " owned by: " + str(self.owner)
 
     #input_formats=('%H:%M',

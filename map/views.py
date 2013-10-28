@@ -4,15 +4,17 @@ from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 import main
+from main.models import Event
 from map.models import StaticLocation
 from registration.models import user_to_fingr
 
 
 @login_required
 def view_map(request):
-    if not request.user.is_authenticated():
-        return redirect(main.views.index)
-    return render(request, 'map.html')
+    user = user_to_fingr(request.user)
+    context = {'my_events': Event.objects.filter(owner=user),
+               'friends_events': Event.objects.filter(owner__in=user.friends_list.all())}
+    return render(request, 'map.html', context)
 
 
 @login_required
@@ -151,5 +153,21 @@ def get_friends_locations(request):
         loc = model_to_dict(friend.my_location)
         loc['name'] = friend.full_name
         response.append(loc)
+
+    return HttpResponse(json.dumps(response))
+
+
+@login_required
+def get_events(request):
+    user = user_to_fingr(request.user)
+    assert user is not None
+
+    response = []
+
+    for event in Event.objects.filter(owner=user):
+        e = model_to_dict(event, fields=['title', 'latitude', 'longitude'])
+        e['owner'] = event.owner.full_name
+        e['id'] = event.pk
+        response.append(e)
 
     return HttpResponse(json.dumps(response))

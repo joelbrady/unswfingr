@@ -28,6 +28,7 @@
 {% endif %}
 <hr />
 
+
 {% if friendEvents %}
         <h2>Invited to:</h2>
 
@@ -50,7 +51,8 @@
         You haven't been invited to anything :(
 {% endif %}
         <hr />
-
+By default new events are located on campus, please go to the map and drag it to it's correct location.
+        <hr />
 
 <form class="form-horizontal" method="post" action="">
     <h4 class=form-signin-heading">Add Event <span class="glyphicon glyphicon-plus" /></h4>
@@ -72,10 +74,8 @@
     </div>
 
     {% endfor %}
-
     <div class="form-group">
         <div class="col-lg-offset-2 col-lg-10">
-
 
             <button class="btn btn-primary" type="submit">Create Event</button>
 

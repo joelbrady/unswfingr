@@ -26,9 +26,6 @@ import itertools
 
 @login_required
 def view_profile(request, target_user_pk):
-    print "target user" + target_user_pk
-
-
     if request.user.is_authenticated():
         #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
         f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
