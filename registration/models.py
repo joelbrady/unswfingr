@@ -30,6 +30,15 @@ class FingrUser(models.Model):
     static_locations = models.ManyToManyField(StaticLocation)
     profile = models.ForeignKey(Profile, unique=True)
     my_location = models.ForeignKey(UserLocation)
+    visibility_hide = 'None'
+    visibility_friends = 'Friends'
+    visibility_all = 'All'
+    visibility_choices = (
+        (visibility_hide, 'None'),
+        (visibility_friends, 'Friends'),
+        (visibility_all, 'All'),
+    )
+    visibility = models.CharField(max_length=7, choices=visibility_choices,default=visibility_all)
 
     def _get_username(self):
         return self.django_user.username
@@ -43,9 +52,17 @@ class FingrUser(models.Model):
     def _messages_list(self):
         return self.messages.all()
 
+    def _full_name(self):
+        if (self.first_name):
+            return self.first_name + " " + self.last_name
+        else:
+            return self.username
+
     friends_list = property(_friends_list)
 
     messages_list = property(_messages_list)
+
+    full_name = property(_full_name)
 
     def __unicode__(self):
         return self.username

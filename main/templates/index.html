@@ -58,20 +58,22 @@ User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username 
 
 <a href="{% url 'profile.views.view_profile' friend.pk %}">
     {% if friend.available %}
-    {% if friend.first_name and friend.last_name %}
-    {{ friend.first_name}} {{ friend.last_name }}
-    {% else %}
-    {{ friend.username }}
-    {% endif %}
+    {{friend.full_name}}
     - <span class="text-success">Free</span> <br />
 
 </a>
 {% endif %}
 {% endfor %}
 {% else %}
-<h2>
+<h3>
     No friends are currently free.
-</h2>
+</h3>
+
+
+        <hr />
+
+
+
 {% endif %}
 
 
