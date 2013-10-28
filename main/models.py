@@ -31,14 +31,5 @@ class Event(models.Model):
     latitude = models.FloatField(default=UNSW_LATITUDE)
     longitude = models.FloatField(default=UNSW_LONGITUDE)
 
-    def _simpletime(time):
-        return "1pm"
-
-
-    timeStart_simple = _simpletime(timeStart)
-    timeEnd_simple = _simpletime(timeEnd)
-
     def __unicode__(self):
-        return self.title + " owned by: " + str(self.owner)
-
-    #input_formats=('%H:%M',
+        return self.title + " @ " + str(self.date)
