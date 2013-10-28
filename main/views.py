@@ -10,6 +10,7 @@ from main.middleware import send_message
 from main.models import Message, Event
 from registration.models import FingrUser, user_to_fingr
 
+
 def index(request):
     context = {}
 
@@ -18,10 +19,6 @@ def index(request):
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
         context['hasOnlineFriends'] = user.friends_list.filter(available=True).count
-
-
-
-
 
     return render(request, 'index.html', context)
 
@@ -279,41 +276,32 @@ def events(request):
                 errors = form._errors.setdefault("timeEnd", ErrorList())
                 errors.append(u"End time must be after Start time")
                 good = False
-            if form.cleaned_data['date']< currTime.date():
+            if form.cleaned_data['date'] < currTime.date():
                 errors = form._errors.setdefault("date", ErrorList())
                 errors.append(u"Day must be today or in the future")
                 good = False
 
             if good:
                 event = Event(title=form.cleaned_data['title'], owner=user, date=form.cleaned_data['date'],
-                              timeStart=currTime,timeEnd=currTime, description=form.cleaned_data['description']
+                              timeStart=startTime, timeEnd=endTime, description=form.cleaned_data['description']
                 )
                 event.save()
-                notify_all_friends(user, "You have been invited to " + str(user.full_name) +"'s event: " + str(event.title))
-
-
-
-
+                notify_all_friends(user, "You have been invited to " + str(user.full_name) + "'s event: " + str(event.title))
 
     else:
         form = EventForm()
 
     context['form'] = form
 
-
-    userEvents = Event.objects.filter(owner=user)
-    context['userEvents'] = userEvents
-
-
-    friendsEvents = Event.objects.filter(owner__in=user.friends_list)
-
-    context['friendEvents'] = friendsEvents
+    context['userEvents'] = Event.objects.filter(owner=user)
+    context['friendEvents'] = Event.objects.filter(owner__in=user.friends_list)
 
     return render(request, 'events.html', context)
 
+
 @login_required
 def delete_event(request, event_id):
-    event = Event.objects.filter(pk=event_id)[0]
+    event = Event.objects.get(pk=event_id)
     user = user_to_fingr(request.user)
     if event.owner == user:
         event.delete()
@@ -322,7 +310,7 @@ def delete_event(request, event_id):
 
 def activate(request):
     context = {}
-    if (FingrUser.objects.filter(username=request.GET.get('user'))):
+    if FingrUser.objects.filter(username=request.GET.get('user')):
         fuser = FingrUser.objects.filter(username=request.GET.get('user'))[0]
         vcode = request.GET.get('code', '')
         if fuser.v_code == vcode:

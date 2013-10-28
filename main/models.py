@@ -1,6 +1,5 @@
 import datetime
 from django.db import models
-from django.forms.extras import SelectDateWidget
 
 
 class Message(models.Model):
@@ -8,7 +7,6 @@ class Message(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     sentFrom = models.ForeignKey('registration.FingrUser', related_name='sent_from_fingruser')
     sentTo = models.ForeignKey('registration.FingrUser', related_name='sent_to_fingruser')
-
 
     read = models.BooleanField(default=False)
 
@@ -30,12 +28,5 @@ class Event(models.Model):
     timeEnd = models.DateTimeField()
     description = models.CharField(max_length=5000)
 
-    def _simpletime(time):
-
-        return "1pm"
-
-
-    timeStart_simple = _simpletime(timeStart)
-    timeEnd_simple = _simpletime(timeEnd)
-
-    #input_formats=('%H:%M',
+    def __unicode__(self):
+        return self.title + " @ " + str(self.date)

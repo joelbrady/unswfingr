@@ -1,14 +1,6 @@
-<html>
-<head>
-    <title>unswFingr.me</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
 Thank you for regsitering your interest with the site!<br>
 We will send an email to {{ email }} shortly allowing you to confirm your email address.
-</body>
-</html>
+{% endblock %}
