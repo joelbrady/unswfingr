@@ -30,10 +30,7 @@
     <div id="friends-locations" style="display: inline-block; padding-left: 100px;">
         <h3>Friends' Locations:</h3>
         {% for friend in fingr_user.friends.all %}
-            {{ friend.first_name }} {{ friend.last_name }}
-            {% for marker in friend.static_locations.all %}
-                {{ marker.name }}<br>
-            {% endfor %}
+            <button id="friend-{{ friend.full_name }}" type="button" onclick="selectFriendLocation('{{ friend.full_name }}')">{{ friend.full_name }}</button>
         {% endfor %}
     </div>
 {% endblock %}
@@ -98,32 +95,35 @@
 
         var map;
         var markers = {};
+        var friendMarker = {};
         var selectedMarker;
         var meMarker;
+        var scaledSize = new google.maps.Size(23, 34);
+        var anchor = new google.maps.Point(17, 34);
 
         var icons = {
             default: {
                 url: "{% static 'images/marker_grey.png' %}",
-                scaledSize: new google.maps.Size(23, 34),
-                anchor: new google.maps.Point(17, 34)
+                scaledSize: scaledSize,
+                anchor: anchor
             },
 
             me: {
                 url: "{% static 'images/marker_blue.png' %}",
-                scaledSize: new google.maps.Size(23, 34),
-                anchor: new google.maps.Point(17, 34)
+                scaledSize: scaledSize,
+                anchor: anchor
             },
 
             selected: {
                 url: "{% static 'images/marker_red.png' %}",
-                scaledSize: new google.maps.Size(23, 34),
-                anchor: new google.maps.Point(17, 34)
+                scaledSize: scaledSize,
+                anchor: anchor
             },
 
             friend: {
                 url: "{% static 'images/marker_green.png' %}",
-                scaledSize: new google.maps.Size(23, 34),
-                anchor: new google.maps.Point(17, 34)
+                scaledSize: scaledSize,
+                anchor: anchor
             }
         };
 
@@ -160,13 +160,12 @@
             });
 
             function makeStaticMarker(data) {
-                console.log("making marker for %O", data);
                 var latLng = new google.maps.LatLng(data.latitude, data.longitude);
                 var staticMarker = new google.maps.Marker({
                             position: latLng,
                             map: map,
                             title: data.name,
-                            draggable: true,
+                            draggable: data.mine,
                             icon: icons.default,
                             fingrType: data.type,
                             fingrId: data.id,
@@ -179,15 +178,9 @@
                                         lng: event.latLng.lng()
                                     },
                                     type: 'POST'
-                                }).done(function(response) {
-                                    var r = $.parseJSON(response);
-                                    if (!r.success) {
-                                        console.log("error posting my marker: %O", r);
-                                    }
                                 });
                             }
                         });
-                console.log("new marker %O", staticMarker);
                 google.maps.event.addDomListener(staticMarker, 'dragend', staticMarker.fingrDrag);
                 if (staticMarker.fingrId !== undefined) {
                     markers[staticMarker.fingrId] = staticMarker;
@@ -196,12 +189,11 @@
             }
 
             function makeMeMarker(data) {
-                console.log("making me marker for %O", data);
                 var latLng = new google.maps.LatLng(data.latitude, data.longitude);
                 var newMeMarker = new google.maps.Marker({
                             position: latLng,
                             map: map,
-                            title: data.name,
+                            title: "You are here!",
                             draggable: true,
                             icon: icons.me,
                             fingrType: data.type,
@@ -217,26 +209,26 @@
                                 });
                             }
                         });
-                console.log("new marker %O", meMarker);
                 google.maps.event.addDomListener(newMeMarker, 'dragend', newMeMarker.fingrDrag);
                 meMarker = newMeMarker
+                map.panTo(latLng);
                 return newMeMarker;
             }
 
             function makeFriendLocation(data) {
-                console.log("friend location for %O", data);
                 var latLng = new google.maps.LatLng(data.latitude, data.longitude);
-                return new google.maps.Marker({
+                var friendLocation = new google.maps.Marker({
                             position: latLng,
                             map: map,
                             title: data.name,
                             draggable: false,
                             icon: icons.friend
                 });
+                friendMarker[data.name] = friendLocation;
+                return friendLocation;
             }
 
             function clickOnMap(event) {
-                console.log("someone clicked @ " + event.latLng);
                 switch(currentMode) {
                     case Modes.STATIC:
                         var staticMarker = makeStaticMarker({
@@ -262,8 +254,6 @@
                         break;
                     case Modes.EVENT:
                         break;
-                    default:
-                        console.log("no active thing to do, ignore click");
                 }
                 currentMode = Modes.NONE;
             }
@@ -284,6 +274,12 @@
                 selectedMarker = markers[marker];
                 selectedMarker.setIcon(icons.selected);
                 map.panTo(selectedMarker.position);
+            }
+        }
+
+        function selectFriendLocation(friend) {
+            if (friendMarker[friend] !== undefined) {
+                map.panTo(friendMarker[friend].position);
             }
         }
 
