@@ -38,7 +38,7 @@
             
             Found Users:<br>
             {% for user in userlist %}
-            User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username }}</a><br>
+            <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.full_name }} ({{ user.email }})</a><br>
             {% endfor %}
     
         </form>
