@@ -265,7 +265,7 @@ def edit_course(request):
             #lab_day_time_formset = DayTimeFormSet(request.POST, prefix='lab_day_time')
 
 
-            if course_formset.is_valid():
+            if (course_formset.is_valid() and (validate_formset(lecture_formset) or validate_formset(tutorial_formset) or validate_formset(laboratory_formset))):
                 #course_formset.save()
                 #lecture_formset.save()
                 #lec_day_time_formset.save()
@@ -279,29 +279,33 @@ def edit_course(request):
                     course = Course(course_name = form.cleaned_data['course_name'] , course_code = form.cleaned_data['course_code'])
                     course.save()
 
-                if lecture_formset.is_valid():
+                if validate_formset(lecture_formset):
                     for lec_form in lecture_formset:
                         # need to figure out a way to compare theses and print an error !!!
-                        print lec_form.cleaned_data['start_time']
-                        print lec_form.cleaned_data['end_time']
-                        lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
-                                          start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
-                        lecture.save()
-                        course.lectures.add(lecture)
+                        if(lec_form.is_valid()):
+                            print "inside lecture formset"
+                            print lec_form.cleaned_data['start_time']
+                            print lec_form.cleaned_data['end_time']
+                            lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
+                                              start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
+                            lecture.save()
+                            course.lectures.add(lecture)
 
-                if tutorial_formset.is_valid():
+                if validate_formset(tutorial_formset):
                     for tut_form in tutorial_formset:
-                       tut = Tutorial(choice_of_day = tut_form.cleaned_data['choice_of_day'],
-                                      start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
-                       tut.save()
-                       course.tutorials.add(tut)
+                        if(tut_form.is_valid()):
+                           tut = Tutorial(choice_of_day = tut_form.cleaned_data['choice_of_day'],
+                                          start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
+                           tut.save()
+                           course.tutorials.add(tut)
 
-                if laboratory_formset.is_valid():
+                if validate_formset(laboratory_formset):
                     for lab_form in laboratory_formset:
-                       lab = Labs( choice_of_day = lab_form.cleaned_data['choice_of_day'],
-                                      start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
-                       lab.save()
-                       course.labs.add(lab)
+                       if(lab_form.is_valid()):
+                           lab = Labs( choice_of_day = lab_form.cleaned_data['choice_of_day'],
+                                          start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
+                           lab.save()
+                           course.labs.add(lab)
 
 
                 profile.courses.add(course)
@@ -340,7 +344,14 @@ def edit_course(request):
         return render_to_response('need_to_login.html', context_instance = RequestContext(request))
 
 
+def validate_formset(form_set):
+    retVal = False
+    for form in form_set:
+        if(form.is_valid()):
+            if(int(form.cleaned_data['start_time']) < int(form.cleaned_data['end_time'])):
+                retVal = True
 
 
 
+    return retVal
 

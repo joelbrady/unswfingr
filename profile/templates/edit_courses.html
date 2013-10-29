@@ -157,13 +157,14 @@
 
         });
         </script>
-        <form action="" method="POST">{% csrf_token %}
+        <form action="" method="POST">
             <h2>Courses</h2>
             {{ course_formset.management_form }}
             {% for courses in course_formset.forms %}
 
                 <div class="course">
                     <!--<input id="course_loop" type="hidden" value="">-->
+                    {% csrf_token %}
                     {{ courses.as_p }}
 
                     {{ lecture_formset.management_form }}
@@ -172,6 +173,7 @@
                         <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter lecture time</center> </p>
                             <div class="lecture">
+                                {% csrf_token %}
                                 {{ lectures.as_p }}
 
                                 <!--{{ daytimes.as_p }}-->
@@ -189,6 +191,7 @@
                         <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter tutorial time</center> </p>
                             <div class="tutorial">
+                            {% csrf_token %}
                             {{ tutorials.as_p }}
                             <!--{{ daytimes.as_p }}-->
                             </div>
@@ -204,6 +207,7 @@
                         <!--{% for daytimes in day_time_formset.forms %}-->
                             <p><center> Enter lab time</center> </p>
                             <div class="laboratory">
+                            {% csrf_token %}
                             {{ laboratories.as_p }}
                             <!--{{ daytimes.as_p }}-->
                             </div>
