@@ -1,6 +1,11 @@
+# Create your views here.
 from django.shortcuts import render_to_response
-from profile.forms import CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm, CustomTimesForm
-from profile.models import Profile, Course, Lecture, Tutorial, Labs, Custom_Times
+from django.contrib.auth.models import User
+from ihooks import current_importer
+from profile.forms import ProfileForm, CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm, CustomTimesForm
+#from profile.forms import CourseForm
+from profile.models import Profile, Course, Lecture, Tutorial, Labs, Day_Times, Custom_Times
+from django.http import HttpResponse
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
 from registration.models import user_to_fingr
@@ -10,6 +15,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import itertools
 import datetime
+from django.shortcuts import render, redirect
+from .forms import UploadFileForm
+from django.http import HttpResponseRedirect
+from bs4 import BeautifulSoup
+import re
+
 
 # add drop down
 # scrub the input data for courses. OPTIONAL
@@ -30,25 +41,25 @@ def automatic_is_available(request):
 
         for course in f_user.profile.courses.all():
             for lecture in course.lectures.all():
-                if int(lecture.start_time) <= current_hour:
-                    if int(lecture.end_time) > current_hour:
-                        if str(lecture.choice_of_day).lower() in current_day.lower():
+                if(int(lecture.start_time) <= current_hour):
+                    if(int(lecture.end_time) > current_hour ):
+                        if(str(lecture.choice_of_day).lower() in current_day.lower()):
                             f_user.available = False
             for tutorial in course.tutorials.all() :
-                if int(tutorial.start_time) <= current_hour:
-                    if int(tutorial.end_time) > current_hour:
-                        if str(lecture.choice_of_day).lower() in current_day.lower():
+                if(int(tutorial.start_time) <= current_hour):
+                    if(int(tutorial.end_time) > current_hour ):
+                        if(str(lecture.choice_of_day).lower() in current_day.lower()):
                             f_user.available = False
             for lab in course.labs.all() :
-                if int(lab.start_time) <= current_hour:
-                    if int(lab.end_time) > current_hour:
-                       if str(lecture.choice_of_day).lower() in current_day.lower():
+                if(int(lab.start_time) <= current_hour):
+                    if(int(lab.end_time) > current_hour ):
+                       if(str(lecture.choice_of_day).lower() in current_day.lower()):
                             f_user.available = False
 
         for custom in f_user.profile.custom_times.all():
-            if int(custom.start_time) <= current_hour:
-                    if int(custom.end_time) > current_hour:
-                        if str(custom.choice_of_day).lower() in current_day.lower():
+            if(int(custom.start_time) <= current_hour):
+                    if(int(custom.end_time) > current_hour ):
+                        if(str(custom.choice_of_day).lower() in current_day.lower()):
                             f_user.available = False
         f_user.save()
 
@@ -80,7 +91,6 @@ def add_custom_times(request):
 
 
                     return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
-                    #return render_to_response('edit_profile.html')
 
 
         form = CustomTimesForm()
@@ -88,11 +98,14 @@ def add_custom_times(request):
         return render_to_response('add_custom_time.html', c, context_instance = RequestContext(request))
 
 
+
 @login_required
 def view_profile(request, target_user_pk):
+    print "target user" + target_user_pk
+
     if request.user.is_authenticated():
         #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
-        f_user = get_object_or_404( FingrUser.objects, pk=target_user_pk)
+        f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
 
         profile = f_user.profile
 
@@ -236,8 +249,141 @@ def view_profile(request, target_user_pk):
         return render_to_response('need_to_login.html')
 
 @login_required
+def add_courses_automatically(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        if request.method == "POST":
+            form = UploadFileForm(request.POST, request.FILES)
+            automatic_timetable(request.FILES['file'], request)
+            #print request
+
+            return HttpResponse("Nice!")
+
+
+        form = UploadFileForm()
+        return render_to_response('add_courses_auto.html', {'upload_file_form': form, }, context_instance = RequestContext(request))
+
+
+
+def automatic_timetable(file, request):
+    days = {"Mon":0, "Tue":1, "Wed":2, "Thu":3, "Fri":4}
+    unsw_start_dates = {
+   '11s1':'28/2/2011',
+   '11s2':'18/7/2011',
+   '12s1':'27/2/2012',
+   '12s2':'16/7/2012',
+   '13s1':'4/3/2013',
+   '13s2':'29/7/2013',
+   '14s1':'3/3/2014',
+   '14s2':'28/7/2014',
+   '15s1':'2/3/2015',
+   '15s2':'27/7/2015',
+   '16s1':'29/2/2016',
+   '16s2':'25/7/2016'
+    }
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        source = file.read()
+        f = source.replace('\r', '')
+        s = BeautifulSoup(f.replace("\n",""))
+
+        # gets the year and sem
+        sem = re.sub(r'.*Semester (\d+) \S\S(\d+).*', u'\\2s\\1', s.find("option", {'selected':'true'}).text)
+        title = sem + " Timetable"
+        #
+        if not re.match(r'\d\ds\d', sem):
+            current_time = datetime.datetime.now()
+            sem = '%ds%d' % (current_time.year % 100, 1 if current_time.month < 7 else 2)
+
+        courses = [x.contents[0] for x in s.findAll("td", {"class":"sectionHeading"})]
+        for course in courses:
+            print course
+
+            course_code = str(course).split("-")[0]
+            course_name = str(course).split("-")[1]
+
+            course_code = course_code.strip()
+            course_name = course_name.strip()
+
+            add_course = Course(course_code = course_code, course_name = course_name)
+            add_course.save()
+
+
+            classes = s.find(text=course).findNext("table").findAll("tr", {"class": re.compile("data")})
+            ctype, code, day, tim, weeks, place, t = ['' for x in xrange(7)]
+            for c in classes:
+                a = [(x.contents[0] if x.contents else "") for x in c.findAll("td", recursive=False)]
+                print a
+                g = (t for t in a)
+                print g
+
+                t = g.next()
+
+                if t.strip() != "&nbsp;":
+                    ctype = t
+
+
+                t = g.next()
+                t= g.next()
+
+                if t.strip() not in days:
+                    code = t
+                    day = g.next().strip()
+                else:
+                    day = t.strip()
+                    tim = g.next()
+                    weeks = g.next()
+                    place = g.next()
+                    t = ' '.join(g.next().findAll(text=True))
+
+                if tim.find(" - ") == -1:
+                    continue
+
+                start, end = tim.split(" - ")
+                start = datetime.datetime.strptime(unsw_start_dates[sem] + ' ' + start, "%d/%m/%Y %I:%M%p")
+                end = datetime.datetime.strptime(unsw_start_dates[sem] + ' ' + end, "%d/%m/%Y %I:%M%p")
+
+
+                start = str(start).split(" ")[1]
+                end = str(end).split(" ")[1]
+
+                start = str(start).split(":")[0]
+                end = str(end).split(":")[0]
+
+                day = day.strip()
+                day = day.upper()
+                print day
+
+                if(ctype == "Lecture"):
+                    new_lecture = Lecture(choice_of_day = day, start_time = start, end_time = end)
+                    new_lecture.save()
+                    add_course.lectures.add(new_lecture)
+
+                elif(ctype == "Tutorial"):
+                    new_tutorial = Tutorial(choice_of_day = day, start_time = start, end_time = end)
+                    new_tutorial.save()
+                    add_course.tutorials.add(new_tutorial)
+
+                elif(ctype == "Laboratory"):
+                    new_lab = Labs(choice_of_day = day, start_time = start, end_time = end)
+                    new_lab.save()
+                    add_course.labs.add(new_lab)
+
+
+            f_user.profile.courses.add(add_course)
+            f_user.profile.save()
+
+
+
+
+
+
+
+
+
+@login_required
 def edit_profile(request):
-    userMessage = ""
+
 
 
     if request.user.is_authenticated():
@@ -258,13 +404,11 @@ def edit_profile(request):
                 f_user.save()
 
 
-                #return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
-                #return render_to_response('edit_profile.html')
-                userMessage = "Profile updated."
+                return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
             else:
                 print profile_form.errors
 
-        return render_to_response('edit_profile.html', {'profile_form': profile_form, 'userMessage':userMessage}, context_instance = RequestContext(request))
+        return render_to_response('edit_profile.html', {'profile_form': profile_form, }, context_instance = RequestContext(request))
     else:
 
         return render_to_response('need_to_login.html', context_instance = RequestContext(request))
@@ -354,7 +498,7 @@ def edit_course(request):
 
                 profile.save()
                 # Not in the else.
-                return render_to_response('add_courses.html', context_instance = RequestContext(request))
+                return render_to_response('add_courses_manually.html', context_instance = RequestContext(request))
 
             else :
                 print course_formset.errors
@@ -397,3 +541,14 @@ def validate_formset(form_set):
 
     return retVal
 
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            #handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render_to_response('upload.html', {'form': form})

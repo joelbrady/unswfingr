@@ -115,7 +115,7 @@ class Course(models.Model):
     def __unicode__(self):
         # this method is used when an instance of this
         # is printed in the interactive shell
-        return self.name
+        return self.course_code
 
 
 

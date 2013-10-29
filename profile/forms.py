@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django import forms
 from profile.models import Profile
 from profile.models import Course
 from profile.models import Lecture, Tutorial, Labs
@@ -12,6 +13,7 @@ class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         exclude = ('courses','custom_times')
+
 
 
 class CourseForm(ModelForm):
@@ -42,3 +44,5 @@ class CustomTimesForm(ModelForm):
     class Meta:
         model = Custom_Times
 
+class UploadFileForm(forms.Form):
+    file  = forms.FileField()
