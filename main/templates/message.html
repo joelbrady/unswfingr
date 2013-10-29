@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if valid %}
-        <h3>Conversation with {{talking_to.full_name}}</h3>
+        <h3>Conversation with <a href="{% url 'profile.views.view_profile' talking_to.pk %}">{{talking_to.full_name}}</a></h3>
         <hr />
         {% if conversation %}
 
