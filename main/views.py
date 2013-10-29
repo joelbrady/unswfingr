@@ -273,7 +273,7 @@ def search(request):
             else:
                 return render(request, 'search.html', context)
         else:
-            context['userlist'] = FingrUser.objects.all()
+            #context['userlist'] = FingrUser.objects.all()
             return render(request, 'search.html', context)
     return redirect('main.views.index')
 

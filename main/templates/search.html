@@ -36,10 +36,11 @@
                 </div>
             </div>
             
-            Found Users:<br>
+            {% if userlist %} Found Users:<br>
             {% for user in userlist %}
             <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.full_name }} ({{ user.email }})</a><br>
             {% endfor %}
+            {% endif %}
     
         </form>
 {% endblock %}
