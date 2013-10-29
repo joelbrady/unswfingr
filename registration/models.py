@@ -30,6 +30,7 @@ class FingrUser(models.Model):
     static_locations = models.ManyToManyField(StaticLocation)
     profile = models.ForeignKey(Profile, unique=True)
     my_location = models.ForeignKey(UserLocation)
+    automatic_availability = models.BooleanField(default=False)
 
     def _get_username(self):
         return self.django_user.username

@@ -1,6 +1,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
+from ihooks import current_importer
 from profile.forms import ProfileForm, CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm
 #from profile.forms import CourseForm
 from profile.models import Profile, Course, Lecture, Tutorial, Labs, Day_Times
@@ -13,21 +14,53 @@ from registration.forms import FingrUserForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import itertools
+import datetime
+from django.shortcuts import render, redirect
 
 
 #remove foreign  key, change around so that ufingr has profile field
 
 #availability, Property ( Fingr user fo r friends list)
 #add drop down
-# make lecture, lab and tutes optional
-# scrub the input data for courses.
+# scrub the input data for courses. OPTIONAL
 # start time and end time for courses
+
+
+# Determines if a user is unavailable based of their timetable data.
+def automatic_is_available(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        f_user.automatic_availability = True
+        current_hour =  datetime.datetime.now().hour
+        current_day = datetime.datetime.now().strftime("%A")
+
+        f_user.available = True
+
+        for course in f_user.profile.courses.all():
+            for lecture in course.lectures.all():
+                if(int(lecture.start_time) <= current_hour):
+                    if(int(lecture.end_time) > current_hour ):
+                        if(str(lecture.choice_of_day).lower() in current_day.lower()):
+                            f_user.available = False
+            for tutorial in course.tutorials.all() :
+                if(int(tutorial.start_time) <= current_hour):
+                    if(int(tutorial.end_time) > current_hour ):
+                        if(str(lecture.choice_of_day).lower() in current_day.lower()):
+                            f_user.available = False
+            for lab in course.labs.all() :
+                if(int(lab.start_time) <= current_hour):
+                    if(int(lab.end_time) > current_hour ):
+                       if(str(lecture.choice_of_day).lower() in current_day.lower()):
+                            f_user.available = False
+        f_user.save()
+
+    #return redirect('main.views.index')
+
 
 
 @login_required
 def view_profile(request, target_user_pk):
     print "target user" + target_user_pk
-
 
     if request.user.is_authenticated():
         #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
@@ -247,6 +280,9 @@ def edit_course(request):
 
                 if lecture_formset.is_valid():
                     for lec_form in lecture_formset:
+                        # need to figure out a way to compare theses and print an error !!!
+                        print lec_form.cleaned_data['start_time']
+                        print lec_form.cleaned_data['end_time']
                         lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
                                           start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
                         lecture.save()

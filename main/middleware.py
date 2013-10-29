@@ -1,6 +1,20 @@
 from django.contrib import messages
 from main.models import Message
 from registration.models import user_to_fingr
+from profile.views import automatic_is_available
+
+
+class CheckAutomaticAvailability(object):
+    @staticmethod
+    def process_view(request, view_func, view_args, view_kwargs):
+        assert hasattr(request,
+                       'user'), 'The UpdateLastActivityMiddleware requires authentication middleware to be installed.'
+        if(request.user.is_authenticated()):
+            user = user_to_fingr(request.user)
+            if user is not None:
+                if(user.automatic_availability == True):
+                    automatic_is_available(request)
+
 
 
 class CheckMessagesMiddleware(object):

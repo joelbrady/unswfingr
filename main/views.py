@@ -114,6 +114,7 @@ def message(request, send_to_user):
 @login_required
 def set_online(request):
     user = user_to_fingr(request.user)
+    user.automatic_availability = False
     user.available = True
     user.save()
     return redirect('main.views.index')
@@ -122,9 +123,17 @@ def set_online(request):
 @login_required
 def set_offline(request):
     user = user_to_fingr(request.user)
+    user.automatic_availability = False
     user.available = False
     user.save()
     return redirect('main.views.index')
+
+def set_automatic(request):
+    user = user_to_fingr(request.user)
+    user.automatic_availability = True
+    user.save()
+    return redirect('main.views.index')
+
 
 
 
