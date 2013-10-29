@@ -15,7 +15,9 @@ urlpatterns = patterns('',
     url(r'^activate', views.activate),
     url(r'^set_online$', views.set_online),
     url(r'^set_offline', views.set_offline),
+    url(r'^set_automatic', views.set_automatic),
     url(r'^events?', views.events),
     url(r'^delete_event/(\d+)/?$', views.delete_event),
+
 
 )

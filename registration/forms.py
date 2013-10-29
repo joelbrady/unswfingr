@@ -25,4 +25,4 @@ class FingrUserForm(ModelForm):
     class Meta:
         model = FingrUser
         exclude = ('messages', 'verified', 'django_user', 'friends', 'v_code', 'available', 'email', 'username',
-                   'static_locations', 'my_location', 'profile')
+                   'static_locations', 'my_location', 'profile','automatic_availability')

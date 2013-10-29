@@ -35,7 +35,7 @@ Edit Profile
         <p> {{course.course_name}} </p>
         {% endfor %}
 
-        {% if user.pk != target_user_pk %}
+        {% if fingr_user.pk != target_user_pk %}
         <a href="{% url 'main.views.message' target_user_pk %}">
             <button type="button" class="btn btn-success">Send Message <span class="glyphicon glyphicon-envelope"></span>
 
@@ -218,6 +218,10 @@ Edit Profile
 {% if fingr_user.pk == target_user_pk %}
 <p>
     <a href="{% url 'profile.views.edit_profile' %}"> Edit Profile </a>
+</p>
+
+<p>
+    <a href="{% url 'profile.views.add_custom_times' %}"> Add custom times </a>
 </p>
 {% else %}
 

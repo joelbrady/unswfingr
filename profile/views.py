@@ -1,10 +1,6 @@
-# Create your views here.
 from django.shortcuts import render_to_response
-from django.contrib.auth.models import User
-from profile.forms import ProfileForm, CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm
-#from profile.forms import CourseForm
-from profile.models import Profile, Course, Lecture, Tutorial, Labs, Day_Times
-from django.http import HttpResponse
+from profile.forms import CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm, CustomTimesForm
+from profile.models import Profile, Course, Lecture, Tutorial, Labs, Custom_Times
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
 from registration.models import user_to_fingr
@@ -13,22 +9,89 @@ from registration.forms import FingrUserForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 import itertools
+import datetime
+
+# add drop down
+# scrub the input data for courses. OPTIONAL
+# automatic timetabling
+# custom busy times
+# add a page indicated that a user needs to validate.
 
 
-#remove foreign  key, change around so that ufingr has profile field
+# Determines if a user is unavailable based of their timetable data.
+def automatic_is_available(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        f_user.automatic_availability = True
+        current_hour =  datetime.datetime.now().hour
+        current_day = datetime.datetime.now().strftime("%A")
 
-#availability, Property ( Fingr user fo r friends list)
-#add drop down
-# make lecture, lab and tutes optional
-# scrub the input data for courses.
-# start time and end time for courses
+        f_user.available = True
+
+        for course in f_user.profile.courses.all():
+            for lecture in course.lectures.all():
+                if int(lecture.start_time) <= current_hour:
+                    if int(lecture.end_time) > current_hour:
+                        if str(lecture.choice_of_day).lower() in current_day.lower():
+                            f_user.available = False
+            for tutorial in course.tutorials.all() :
+                if int(tutorial.start_time) <= current_hour:
+                    if int(tutorial.end_time) > current_hour:
+                        if str(lecture.choice_of_day).lower() in current_day.lower():
+                            f_user.available = False
+            for lab in course.labs.all() :
+                if int(lab.start_time) <= current_hour:
+                    if int(lab.end_time) > current_hour:
+                       if str(lecture.choice_of_day).lower() in current_day.lower():
+                            f_user.available = False
+
+        for custom in f_user.profile.custom_times.all():
+            if int(custom.start_time) <= current_hour:
+                    if int(custom.end_time) > current_hour:
+                        if str(custom.choice_of_day).lower() in current_day.lower():
+                            f_user.available = False
+        f_user.save()
+
+    #return redirect('main.views.index')
+
+@login_required
+def add_custom_times(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        form = CustomTimesForm()
+
+        if request.method == "POST":
+
+            form = CustomTimesForm(request.POST, request.FILES)
+            if form.is_valid():
+
+                if int(form.cleaned_data['start_time']) < int(form.cleaned_data['end_time']):
+                    name = form.cleaned_data['name']
+                    choice_of_day = form.cleaned_data['choice_of_day']
+                    start_time = form.cleaned_data['start_time']
+                    end_time = form.cleaned_data['end_time']
+
+                    custom_time = Custom_Times(name = name, choice_of_day = choice_of_day, start_time = start_time, end_time = end_time)
+                    custom_time.save()
+
+
+                    f_user.profile.custom_times.add(custom_time)
+
+
+
+                    return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
+
+
+        form = CustomTimesForm()
+        c = {'form': form,}
+        return render_to_response('add_custom_time.html', c, context_instance = RequestContext(request))
 
 
 @login_required
 def view_profile(request, target_user_pk):
     if request.user.is_authenticated():
         #f_user = FingrUser.objects.filter(pk=target_user_pk)[0]
-        f_user = get_object_or_404( FingrUser.objects,pk=target_user_pk)
+        f_user = get_object_or_404( FingrUser.objects, pk=target_user_pk)
 
         profile = f_user.profile
 
@@ -80,6 +143,18 @@ def view_profile(request, target_user_pk):
                     thursday = thursday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
                 elif lab.choice_of_day == "FRI":
                     friday = friday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+
+        for custom_time in profile.custom_times.all():
+            if custom_time.choice_of_day == "MON":
+                monday = monday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "TUE":
+                tuesday = tuesday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "WED":
+                wednesday = wednesday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "THU":
+                thursday = thursday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "FRI":
+                friday = friday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
 
         monday = monday.strip("\n")
         tuesday = tuesday.strip("\n")
@@ -179,7 +254,7 @@ def edit_profile(request):
 
                 f_user.first_name = profile_form.cleaned_data['first_name']
                 f_user.last_name = profile_form.cleaned_data['last_name']
-                f_user.visibility = profile.form.cleaned_data['visibility']
+                f_user.visibility = profile_form.cleaned_data['visibility']
                 f_user.save()
 
 
@@ -230,7 +305,7 @@ def edit_course(request):
             #lab_day_time_formset = DayTimeFormSet(request.POST, prefix='lab_day_time')
 
 
-            if course_formset.is_valid():
+            if (course_formset.is_valid() and (validate_formset(lecture_formset) or validate_formset(tutorial_formset) or validate_formset(laboratory_formset))):
                 #course_formset.save()
                 #lecture_formset.save()
                 #lec_day_time_formset.save()
@@ -244,26 +319,33 @@ def edit_course(request):
                     course = Course(course_name = form.cleaned_data['course_name'] , course_code = form.cleaned_data['course_code'])
                     course.save()
 
-                if lecture_formset.is_valid():
+                if validate_formset(lecture_formset):
                     for lec_form in lecture_formset:
-                        lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
-                                          start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
-                        lecture.save()
-                        course.lectures.add(lecture)
+                        # need to figure out a way to compare theses and print an error !!!
+                        if(lec_form.is_valid()):
+                            print "inside lecture formset"
+                            print lec_form.cleaned_data['start_time']
+                            print lec_form.cleaned_data['end_time']
+                            lecture = Lecture(choice_of_day = lec_form.cleaned_data['choice_of_day'],
+                                              start_time = lec_form.cleaned_data['start_time'], end_time = lec_form.cleaned_data['end_time'])
+                            lecture.save()
+                            course.lectures.add(lecture)
 
-                if tutorial_formset.is_valid():
+                if validate_formset(tutorial_formset):
                     for tut_form in tutorial_formset:
-                       tut = Tutorial(choice_of_day = tut_form.cleaned_data['choice_of_day'],
-                                      start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
-                       tut.save()
-                       course.tutorials.add(tut)
+                        if(tut_form.is_valid()):
+                           tut = Tutorial(choice_of_day = tut_form.cleaned_data['choice_of_day'],
+                                          start_time = tut_form.cleaned_data['start_time'], end_time = tut_form.cleaned_data['end_time'])
+                           tut.save()
+                           course.tutorials.add(tut)
 
-                if laboratory_formset.is_valid():
+                if validate_formset(laboratory_formset):
                     for lab_form in laboratory_formset:
-                       lab = Labs( choice_of_day = lab_form.cleaned_data['choice_of_day'],
-                                      start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
-                       lab.save()
-                       course.labs.add(lab)
+                       if(lab_form.is_valid()):
+                           lab = Labs( choice_of_day = lab_form.cleaned_data['choice_of_day'],
+                                          start_time = lab_form.cleaned_data['start_time'], end_time = lab_form.cleaned_data['end_time'])
+                           lab.save()
+                           course.labs.add(lab)
 
 
                 profile.courses.add(course)
@@ -302,7 +384,14 @@ def edit_course(request):
         return render_to_response('need_to_login.html', context_instance = RequestContext(request))
 
 
+def validate_formset(form_set):
+    retVal = False
+    for form in form_set:
+        if(form.is_valid()):
+            if(int(form.cleaned_data['start_time']) < int(form.cleaned_data['end_time'])):
+                retVal = True
 
 
 
+    return retVal
 

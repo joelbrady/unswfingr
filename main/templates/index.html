@@ -37,14 +37,19 @@ User: <a href="{% url 'profile.views.view_profile' user.pk %}">{{ user.username 
         </strong>
 
                     </div>
-        <div class="col-md-5">
+        <div class="col-md-3">
             <a href="{% url 'main.views.set_online' %}">
                 <button type="button" class="btn btn-success btn-block">Free </button>
             </a>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-3">
+            <a href="{% url 'main.views.set_automatic' %}">
+                <button type="button" class="btn btn-warning btn-block"> Automatic </button>
+            </a>
+        </div>
+        <div class="col-md-3">
             <a href="{% url 'main.views.set_offline' %}">
-                <button type="button" class="btn btn-danger btn-block">Unavailalbe</button>
+                <button type="button" class="btn btn-danger btn-block">Unavailable</button>
             </a>
         </div>
     </div>
