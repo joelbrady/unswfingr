@@ -22,6 +22,9 @@ class RegistrationForm(forms.Form):
 
 
 class FingrUserForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(FingrUserForm, self).__init__(*args, **kwargs)
+        self.fields['visibility'].label = "Search results visible to"
     class Meta:
         model = FingrUser
         exclude = ('messages', 'verified', 'django_user', 'friends', 'v_code', 'available', 'email', 'username',

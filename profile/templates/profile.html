@@ -62,23 +62,31 @@ Edit Profile
     {% ifequal friday|length 1 %}
     {%ifequal target_user_pk fingr_user.pk %}
     <p> <b> Please add timetable.</b> </p>
+        <a href="{% url 'profile.views.edit_course' %}"><span class="glyphicon glyphicon-plus"></span> Manually add timetable information</a>
+
     {% else %}
-    <p> <b> No timetable added.</b></p>
+    <p> <b> No timetable added.</b>
+</p>
     {%endifequal %}
     {% endifequal %}
     {% endifequal %}
     {% endifequal %}
     {% endifequal %}
     {% endifequal %}
-
-    <table border="2">
+    <hr />
+    {% if fingr_user.pk == target_user_pk %}
+    <h2>Your timetable:</h2>
+    {% else %}
+    <h2>Timetable:</h2>
+    {% endif %}
+    <table class="table table-bordered table-striped table-hover">
 
 
         {% ifequal monday|length 1 %}
         {% else %}
         <tr>
             <td>
-                Monday
+                <strong>Monday</strong>
             </td>
             {% if iterator.next %}
             <td>
@@ -106,7 +114,7 @@ Edit Profile
         {% else %}
         <tr>
             <td>
-                Tuesday
+                <strong>Tuesday</strong>
             </td>
             {% if iterator2.next %}
             <td>
@@ -133,7 +141,7 @@ Edit Profile
         {%else%}
         <tr>
             <td>
-                Wednesday
+                <strong>Wednesday</strong>
             </td>
             {% if iterator3.next %}
             <td>
@@ -159,7 +167,7 @@ Edit Profile
         {%else%}
         <tr>
             <td>
-                Thursday
+                <strong>Thursday</strong>
             </td>
             {% if iterator4.next %}
             <td>
@@ -185,7 +193,7 @@ Edit Profile
         {%else%}
         <tr>
             <td>
-                Friday
+                <strong>Friday</strong>
             </td>
             {% if iterator5.next %}
             <td>
@@ -199,7 +207,9 @@ Edit Profile
                 <p> {{ data }} </p>
 
                 {% if iterator5.next|divisibleby:"3" %}
+
             </td>
+
             {% endif %}
 
 
@@ -209,6 +219,7 @@ Edit Profile
 
 
     </table>
+    <hr/>
 
     {% endif %}
 </center>
