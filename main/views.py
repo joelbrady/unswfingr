@@ -244,8 +244,9 @@ def delete_friend(request, target_user_pk):
         context['authenticated'] = True
         user = user_to_fingr(request.user)
         target_user = FingrUser.objects.filter(pk=target_user_pk)[0]
-        user.friends.add(target_user)
+        user.friends.remove(target_user)
         target_user.friends.remove(user)
+        user.save()
         target_user.save()
         
     return render(request, 'available_friends.html', context)
@@ -345,8 +346,8 @@ def activate(request):
         if fuser.v_code == vcode:
             fuser.verify()
             fuser.save()
-            print("activated")
             context['email'] = fuser
+            return render(request, 'login.html', context)
         else:
             context['code_fail'] = True
         return render(request, 'activate.html', context)
