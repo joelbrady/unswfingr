@@ -17,13 +17,12 @@ import itertools
 import datetime
 from django.shortcuts import render, redirect
 
-
-#remove foreign  key, change around so that ufingr has profile field
-
-#availability, Property ( Fingr user fo r friends list)
-#add drop down
+# add drop down
 # scrub the input data for courses. OPTIONAL
 # start time and end time for courses
+# automatic timetabling
+# custom busy times
+# add a page indicated that a user needs to validate.
 
 
 # Determines if a user is unavailable based of their timetable data.
@@ -215,7 +214,7 @@ def edit_profile(request):
 
                 f_user.first_name = profile_form.cleaned_data['first_name']
                 f_user.last_name = profile_form.cleaned_data['last_name']
-                f_user.visibility = profile.form.cleaned_data['visibility']
+                f_user.visibility = profile_form.cleaned_data['visibility']
                 f_user.save()
 
 
