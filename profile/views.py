@@ -65,6 +65,12 @@ def automatic_is_available(request):
 
     #return redirect('main.views.index')
 
+def profile(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+
+        return redirect('profile.views.view_profile', request.user.pk)
+
 @login_required
 def add_custom_times(request):
     if request.user.is_authenticated():
@@ -257,7 +263,7 @@ def add_courses_automatically(request):
             automatic_timetable(request.FILES['file'], request)
             #print request
 
-            return HttpResponse("Nice!")
+            return redirect('profile.views.view_profile')
 
 
         form = UploadFileForm()
@@ -352,7 +358,7 @@ def automatic_timetable(file, request):
 
                 day = day.strip()
                 day = day.upper()
-                print day
+
 
                 if(ctype == "Lecture"):
                     new_lecture = Lecture(choice_of_day = day, start_time = start, end_time = end)
