@@ -39,8 +39,8 @@
         <dl class="dl-horizontal">
             <dt>Created by</dt> <dd><a href="{% url 'profile.views.view_profile' event.owner.pk %}">{{event.owner.full_name}}</a></dd>
             <dt>Date <span class="glyphicon glyphicon-calendar" /></dt> <dd>{{event.date}}</dd>
-            <dt>Starts <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeStart|date:"h:m a"}}</dd>
-            <dt>Ends <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeEnd|date:"h:m a"}}</dd>
+            <dt>Starts <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeStart|date:"h:i a"}}</dd>
+            <dt>Ends <span class="glyphicon glyphicon-time" /></dt> <dd>{{event.timeEnd|date:"h:i a"}}</dd>
             <dt>Description</dt> <dd>{{event.description}}</dd>
 
         </dl>
