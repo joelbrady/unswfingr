@@ -69,7 +69,7 @@ def profile(request):
     if request.user.is_authenticated():
         f_user = user_to_fingr(request.user)
 
-        return redirect('profile.views.view_profile', request.user.pk)
+        return redirect('profile.views.view_profile', f_user.pk)
 
 @login_required
 def add_custom_times(request):
