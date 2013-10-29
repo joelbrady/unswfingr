@@ -39,7 +39,6 @@ class FingrUser(models.Model):
     )
     visibility = models.CharField(max_length=7, choices=visibility_choices, default=visibility_all)
 
-
     def _get_username(self):
         return self.django_user.username
 
@@ -75,7 +74,11 @@ def user_to_fingr(django_user):
     """
     Converts a django auth User object to a FingrUser object
     """
-    return FingrUser.objects.get(django_user=django_user)
+    try:
+        fingr_user = FingrUser.objects.get(django_user=django_user)
+    except:
+        fingr_user = None
+    return fingr_user
 
 
 def create_fingr_user(email, password, **kwargs):

@@ -56,11 +56,6 @@ class Profile(models.Model):
     courses = models.ManyToManyField('Course')
     custom_times = models.ManyToManyField('Custom_Times')
 
-    def __unicode__(self):
-        # this method is used when an instance of this
-        # is printed in the interactive shell
-        return self.fingr_user.username
-
 
 class Lecture(models.Model):
     choice_of_day = models.CharField(max_length=3,choices=days)

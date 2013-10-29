@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="map-canvas" style="width: 75%; height: 500px;"></div>
+    <div id="map-canvas" style="width: 80%; height: 500px;"></div>
     <div id="map-buttons">
         <input id="static-marker-name" type="text"><br>
         <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
@@ -20,7 +20,8 @@
         Your current location is shown in blue. We will approximate your location for you with the button below. Or you can drag your marker yourself to set your location.<br>
         You can drag static locations and events that you own to set their location.
     </div>
-    <div id="user-static-markers" style="display: inline-block; vertical-align: top;">
+        <div class="row">
+    <div class="col-lg-4">
         <h3>Locations</h3>
         {% for marker in fingr_user.static_locations.all %}
             <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
@@ -31,13 +32,13 @@
             {% endfor %}
         {% endfor %}
     </div>
-    <div id="friends-locations" style="display: inline-block; padding-left: 100px; vertical-align: top;">
+    <div class="col-lg-4">
         <h3>Friends' Locations</h3>
         {% for friend in fingr_user.friends.all %}
             <button id="friend-{{ friend.full_name }}" type="button" onclick="selectFriendLocation('{{ friend.full_name }}')">{{ friend.full_name }}</button>
         {% endfor %}
     </div>
-    <div id="events" style="display: inline-block; padding-left: 100px; vertical-align: top;">
+    <div class="col-lg-4">
         <h3>Events</h3>
         {% for event in my_events %}
             <button id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
@@ -45,6 +46,7 @@
         {% for event in friends_events %}
             <button id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
         {% endfor %}
+    </div>
     </div>
 {% endblock %}
 
