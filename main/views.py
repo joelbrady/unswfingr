@@ -242,7 +242,7 @@ def delete_friend(request, target_user_pk):
     target_user.friends.remove(user)
     target_user.save()
     user.save()
-        
+
     return render(request, 'available_friends.html')
 
 
@@ -340,8 +340,8 @@ def activate(request):
         if fuser.v_code == vcode:
             fuser.verify()
             fuser.save()
-            print("activated")
             context['email'] = fuser
+            return render(request, 'login.html', context)
         else:
             context['code_fail'] = True
         return render(request, 'activate.html', context)
