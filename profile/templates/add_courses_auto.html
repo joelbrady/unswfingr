@@ -10,6 +10,7 @@
         <body>
              <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
                 <h2 class=form-signin-heading">Add timetable file</h2>
+                <p>Please add the timetable.xml that you get from the source file of your timetable from myunsw.</p>
                 {% csrf_token %}
                 {{ upload_file_form.non_field_errors }}
                 {% for field in upload_file_form %}
