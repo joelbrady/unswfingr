@@ -3,7 +3,7 @@ import datetime
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.forms.util import ErrorList
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm, EventForm
 from main.middleware import send_message
 from main.models import Message, Event
@@ -236,19 +236,14 @@ def friends(request):
     
 @login_required
 def delete_friend(request, target_user_pk):
-    """
-    target_user_pk should be the primary key of the user that we want to add as a friend
-    """
-    context = {}
-    if request.user.is_authenticated():
-        context['authenticated'] = True
-        user = user_to_fingr(request.user)
-        target_user = FingrUser.objects.filter(pk=target_user_pk)[0]
-        user.friends.add(target_user)
-        target_user.friends.remove(user)
-        target_user.save()
+    user = user_to_fingr(request.user)
+    target_user = get_object_or_404(FingrUser, pk=target_user_pk)
+    user.friends.remove(target_user)
+    target_user.friends.remove(user)
+    target_user.save()
+    user.save()
         
-    return render(request, 'available_friends.html', context)
+    return render(request, 'available_friends.html')
 
 
 @login_required
