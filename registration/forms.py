@@ -22,6 +22,11 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError('Passwords do not match')
         return password
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if FingrUser.objects.filter(email=email).count() > 0:
+            raise forms.ValidationError('Email already in use')
+
 
 class FingrUserForm(ModelForm):
     class Meta:
