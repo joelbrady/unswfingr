@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^update_static$', views.update_static_marker),
     url(r'^get_static$', views.get_static_markers),
     url(r'^set_my_marker$', views.set_my_marker),
-    url(r'^get_my_marker$', views.get_my_marker)
+    url(r'^get_my_marker$', views.get_my_marker),
+    url(r'^get_friends_locations$', views.get_friends_locations)
 )

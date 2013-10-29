@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 
@@ -7,7 +8,6 @@ class Message(models.Model):
     sentFrom = models.ForeignKey('registration.FingrUser', related_name='sent_from_fingruser')
     sentTo = models.ForeignKey('registration.FingrUser', related_name='sent_to_fingruser')
 
-
     read = models.BooleanField(default=False)
 
     MESSAGE = 'M'
@@ -16,3 +16,17 @@ class Message(models.Model):
                     (MESSAGE, 'Message'),
                     )
     type = models.CharField(max_length=1, choices=TYPE_CHOICES, default=NOTIFICATION)
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=30)
+
+    owner = models.ForeignKey('registration.FingrUser', related_name='event_owner')
+    day = datetime.date.today
+    date = models.DateField(default=day)
+    timeStart = models.DateTimeField()
+    timeEnd = models.DateTimeField()
+    description = models.CharField(max_length=5000)
+
+    def __unicode__(self):
+        return self.title + " @ " + str(self.date)

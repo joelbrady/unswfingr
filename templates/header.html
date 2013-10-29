@@ -9,13 +9,8 @@
 
             {% if fingr_user %}
                         <a class="navbar-brand" href="/">
-                        {% if fingr_user.first_name and fingr_user.last_name %}
-                            unswFingr.me - {{fingr_user.first_name}} {{fingr_user.last_name}}
+                         unswFingr.me - {{fingr_user.full_name}}
 
-                        {% else %}
-                                unswFingr.me - {{fingr_user.username}}
-
-                        {% endif %}
                         {% if fingr_user.available %}
                             <span class="glyphicon-green">
                          <span class="glyphicon glyphicon-chevron-up "></span>
@@ -52,12 +47,13 @@
 
 
                 <li><a href="{% url 'main.views.friends' %}">Friends <span class="glyphicon glyphicon-user" /></a></li>
-
+                <li><a href="{% url 'main.views.events' %}">Events <span class="glyphicon glyphicon-time" /></a></li>
                 <li><a href="{% url 'main.views.search' %}">Search <span class="glyphicon glyphicon-search" /></a></li>
 
 
                 <li><a href="{% url 'main.views.inbox' %}">Inbox <span class="glyphicon glyphicon-envelope {%if newMessage %}glyphicon-red{% endif %}" /></a></li>
                 <li><a href="{% url 'map.views.view_map' %}">Map <span class="glyphicon glyphicon-map-marker" /></a></li>
+                <li><a href="{% url 'main.views.logout' %}">Log out <span class="glyphicon glyphicon-off" /></a></li>
 
                 {% else %}
                 <li><a href="{% url 'main.views.login' %}">Login <span class="glyphicon glyphicon-arrow-down" /></a></li>
@@ -66,8 +62,6 @@
 
 
                 {% endif %}
-                <li><a href="/admin">Administrator <span class="glyphicon glyphicon-lock" /></a></li>
-                <li><a href="{% url 'main.views.logout' %}">Log out <span class="glyphicon glyphicon-off" /></a></li>
 
             </ul>
         </div><!--/.nav-collapse -->
