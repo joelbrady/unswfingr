@@ -341,10 +341,10 @@ def activate(request):
             fuser.verify()
             fuser.save()
             context['email'] = fuser
-            return render(request, 'login.html', context)
+            return redirect('main.views.login')
         else:
             context['code_fail'] = True
-        return redirect('main.views.login')
+        return render(request, 'activate.html', context)
     else:
         context['user_fail'] = True
         return render(request, 'activate.html', context)
