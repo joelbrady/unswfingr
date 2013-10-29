@@ -6,7 +6,6 @@ from registration.models import create_fingr_user
 from django.core.mail import send_mail
 import string
 import random
-from profile.models import Profile
 
 DEFAULT_FROM_ADDRESS = "noreply@unswfingr.me"
 
@@ -16,7 +15,10 @@ def register(request):
         # load up the form with data from the POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = create_fingr_user(form.cleaned_data['email'], form.cleaned_data['password'])
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            user = create_fingr_user(form.cleaned_data['email'], form.cleaned_data['password'], first_name=first_name,
+                                     last_name=last_name)
 
             verification(form.cleaned_data['email'], user, request)
 

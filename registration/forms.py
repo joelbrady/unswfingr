@@ -5,7 +5,9 @@ from registration.models import FingrUser
 
 
 class RegistrationForm(forms.Form):
-    email = forms.EmailField(max_length=30, widget=forms.TextInput(attrs={'autofocus': 'true'}))
+    first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'autofocus': 'true'}))
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField(max_length=30)
     password = forms.CharField(widget=forms.PasswordInput(), max_length=MAXIMUM_PASSWORD_LENGTH)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput(),
                                 max_length=MAXIMUM_PASSWORD_LENGTH)
