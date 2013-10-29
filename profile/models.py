@@ -54,6 +54,7 @@ class Profile(models.Model):
     #email = models.EmailField(max_length=100)#models.ForeignKey(Person, to_field=name) # We prefer person.name as this will get our email from person class. FIX LATER!
     #phone = models.IntegerField()
     courses = models.ManyToManyField('Course')
+    custom_times = models.ManyToManyField('Custom_Times')
 
     def __unicode__(self):
         # this method is used when an instance of this
@@ -91,6 +92,17 @@ class Labs(models.Model):
         # this method is used when an instance of this
         # is printed in the interactive shell
         return 'Lab model'
+
+class Custom_Times(models.Model):
+    name = models.CharField(max_length=100)
+    choice_of_day = models.CharField(max_length=3,choices=days)
+    start_time = models.CharField(max_length=2,choices=times)
+    end_time = models.CharField(max_length=2,choices=times)
+
+    def __unicode__(self):
+        # this method is used when an instance of this
+        # is printed in the interactive shell
+        return 'Custom Times Model'
 
 class Course(models.Model):
     course_code = models.CharField(max_length=8)

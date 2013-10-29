@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Add custom time{% endblock %}
+{% block content %}
+
+    </head>
+    <body>
+
+    <form class="form-horizontal" method="post" action="">
+            <h2 class=form-signin-heading">Add Custom time</h2>
+
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.label }}" class="col-lg-2 control-label">{{ field.label }}</label>
+
+                <div class="col-lg-10">
+                    {% load widget_tweaks %}
+                    {% if field.label == "Username" %}
+                        {% render_field field class="form-control" placeholder=field.label autofocus="true"%}
+                    {% else %}
+                        {% render_field field class="form-control" placeholder=field.label %}
+
+                    {% endif %}
+
+
+
+
+                </div>
+                <span class="text-danger">{{ field.errors }}</span>
+            </div>
+
+            {% endfor %}
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+
+
+                    <button class="btn btn-primary" type="submit">Update</button>
+
+                </div>
+            </div>
+
+        </form>
+    </body>
+{% endblock %}
+

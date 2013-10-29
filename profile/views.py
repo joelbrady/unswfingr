@@ -2,9 +2,9 @@
 from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
 from ihooks import current_importer
-from profile.forms import ProfileForm, CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm
+from profile.forms import ProfileForm, CourseForm, LectureForm, DayTimesForm, TutorialForm, LabForm, CustomTimesForm
 #from profile.forms import CourseForm
-from profile.models import Profile, Course, Lecture, Tutorial, Labs, Day_Times
+from profile.models import Profile, Course, Lecture, Tutorial, Labs, Day_Times, Custom_Times
 from django.http import HttpResponse
 from django.forms.formsets import formset_factory, BaseFormSet
 from django.template import RequestContext
@@ -19,7 +19,6 @@ from django.shortcuts import render, redirect
 
 # add drop down
 # scrub the input data for courses. OPTIONAL
-# start time and end time for courses
 # automatic timetabling
 # custom busy times
 # add a page indicated that a user needs to validate.
@@ -51,9 +50,47 @@ def automatic_is_available(request):
                     if(int(lab.end_time) > current_hour ):
                        if(str(lecture.choice_of_day).lower() in current_day.lower()):
                             f_user.available = False
+
+        for custom in f_user.profile.custom_times.all():
+            if(int(custom.start_time) <= current_hour):
+                    if(int(custom.end_time) > current_hour ):
+                        if(str(custom.choice_of_day).lower() in current_day.lower()):
+                            f_user.available = False
         f_user.save()
 
     #return redirect('main.views.index')
+
+@login_required
+def add_custom_times(request):
+    if request.user.is_authenticated():
+        f_user = user_to_fingr(request.user)
+        form = CustomTimesForm()
+
+        if request.method == "POST":
+
+            form = CustomTimesForm(request.POST, request.FILES)
+            if form.is_valid():
+
+                if int(form.cleaned_data['start_time']) < int(form.cleaned_data['end_time']):
+                    name = form.cleaned_data['name']
+                    choice_of_day = form.cleaned_data['choice_of_day']
+                    start_time = form.cleaned_data['start_time']
+                    end_time = form.cleaned_data['end_time']
+
+                    custom_time = Custom_Times(name = name, choice_of_day = choice_of_day, start_time = start_time, end_time = end_time)
+                    custom_time.save()
+
+
+                    f_user.profile.custom_times.add(custom_time)
+
+
+
+                    return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
+
+
+        form = CustomTimesForm()
+        c = {'form': form,}
+        return render_to_response('add_custom_time.html', c, context_instance = RequestContext(request))
 
 
 
@@ -115,6 +152,18 @@ def view_profile(request, target_user_pk):
                     thursday = thursday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
                 elif lab.choice_of_day == "FRI":
                     friday = friday + course.course_code + "\t" + "Lab" + "\t" + lab.start_time + "-" + lab.end_time + "\n"
+
+        for custom_time in profile.custom_times.all():
+            if custom_time.choice_of_day == "MON":
+                monday = monday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "TUE":
+                tuesday = tuesday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "WED":
+                wednesday = wednesday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "THU":
+                thursday = thursday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
+            elif custom_time.choice_of_day == "FRI":
+                friday = friday + custom_time.name + "\t" + custom_time.start_time + "-" + custom_time.end_time + "\n"
 
         monday = monday.strip("\n")
         tuesday = tuesday.strip("\n")
