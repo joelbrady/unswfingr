@@ -26,7 +26,7 @@ class RegistrationForm(forms.Form):
         email = self.cleaned_data['email']
         if FingrUser.objects.filter(email=email).count() > 0:
             raise forms.ValidationError('Email already in use')
-
+        return email
 
 class FingrUserForm(ModelForm):
     def __init__(self, *args, **kwargs):
