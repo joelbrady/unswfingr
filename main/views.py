@@ -232,6 +232,23 @@ def friends(request):
         context['authenticated'] = True
         context['userlist'] = FingrUser.objects.all()
     return render(request, 'available_friends.html', context)
+    
+    
+@login_required
+def delete_friend(request, target_user_pk):
+    """
+    target_user_pk should be the primary key of the user that we want to add as a friend
+    """
+    context = {}
+    if request.user.is_authenticated():
+        context['authenticated'] = True
+        user = user_to_fingr(request.user)
+        target_user = FingrUser.objects.filter(pk=target_user_pk)[0]
+        user.friends.add(target_user)
+        target_user.friends.remove(user)
+        target_user.save()
+        
+    return render(request, 'available_friends.html', context)
 
 
 @login_required

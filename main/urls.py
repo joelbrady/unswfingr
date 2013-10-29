@@ -6,6 +6,7 @@ urlpatterns = patterns('',
     url(r'^login$', views.login),
     url(r'^logout$', views.logout),
     url(r'^add_friend/(\d+)/?$', views.add_friend),
+    url(r'^delete_friend/(\d+)/?$', views.delete_friend),
     url(r'^status$', views.set_status),
     url(r'^friends$', views.friends),
     url(r'^message/?$', views.inbox),
@@ -18,6 +19,5 @@ urlpatterns = patterns('',
     url(r'^set_automatic', views.set_automatic),
     url(r'^events?', views.events),
     url(r'^delete_event/(\d+)/?$', views.delete_event),
-
 
 )
