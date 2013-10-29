@@ -2,7 +2,6 @@ from itertools import chain
 import datetime
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django.forms.util import ErrorList
 from django.shortcuts import render, redirect
 from main.forms import LoginForm, StatusForm, MessageForm, SearchForm, EventForm
@@ -73,9 +72,13 @@ def message(request, send_to_user):
     if request.user.is_authenticated():
         user = user_to_fingr(request.user)
         context['authenticated'] = True
-        if int(send_to_user) <= FingrUser.objects.count():
-            target_user = FingrUser.objects.filter(pk=send_to_user)[0]
+        target_user = FingrUser.objects.filter(pk=send_to_user)
+        if len(target_user) > 0:
+            target_user = target_user[0]
+        else:
+            target_user = None
 
+        if target_user:
             if request.POST:
                 form = MessageForm(request.POST)
                 if form.is_valid():
