@@ -9,7 +9,7 @@
 
     {% for friend in fingr_user.friends_list %}
      {% if friend.available %}
-      <a href="{% url 'profile.views.view_profile' friend.pk %}">{{ friend.username }} - <span class="text-success">Free</span></a> <br />
+      <a href="{% url 'profile.views.view_profile' friend.pk %}">{{ friend.full_name }} - <span class="text-success">Free</span></a> <br />
     {% endif %}
     {% endfor %}
 
@@ -19,7 +19,7 @@
 
     {% for friend in fingr_user.friends_list %}
      {% if not friend.available %}
-     <a href="{% url 'profile.views.view_profile' friend.pk %}"> {{ friend.username }} - <span class="text-danger">Unavailable</span></a> <br />
+     <a href="{% url 'profile.views.view_profile' friend.pk %}"> {{ friend.full_name }} - <span class="text-danger">Unavailable</span></a> <br />
     {% endif %}
     {% endfor %}
 
