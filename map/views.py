@@ -2,8 +2,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.forms import model_to_dict
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
-import main
+from django.shortcuts import render
 from main.models import Event
 from map.models import StaticLocation
 from registration.models import user_to_fingr
@@ -99,6 +98,7 @@ def get_static_markers(request):
     def model_to_dict_wrapper(instance):
         d = model_to_dict(instance, fields=['name', 'latitude', 'longitude'])
         d['id'] = instance.pk
+        d['mine'] = (instance in user.static_locations.all())
         return d
 
     response = map(model_to_dict_wrapper, response)
