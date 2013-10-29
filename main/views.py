@@ -298,7 +298,7 @@ def events(request):
                               timeStart=startTime, timeEnd=endTime, description=form.cleaned_data['description']
                 )
                 event.save()
-                notify_all_friends(user, "You have been invited to " + str(user.full_name) + "'s event: " + str(event.title))
+                notify_all_friends(user, "You have been invited to " + user.full_name + "'s event: " + event.title)
 
     else:
         form = EventForm()
