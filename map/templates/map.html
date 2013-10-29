@@ -10,10 +10,10 @@
     <div id="map-canvas" style="width: 80%; height: 500px;"></div>
     <div id="map-buttons">
         <input id="static-marker-name" type="text"><br>
-        <button id="new-static" type="button" onclick="staticMode()">Add new static location</button>
-        <button id="my-location" type="button" onclick="goToMe()">Show my current location</button>
-        <button id="my-auto-loc" type="button" onclick="myAutoLoc()">Auto set my location</button>
-        <button id="help-button" type="button" onclick="toggleHelp()">Help</button>
+        <button class="btn btn-default" id="new-static" type="button" onclick="staticMode()">Add new static location</button>
+        <button class="btn btn-default" id="my-location" type="button" onclick="goToMe()">Show my current location</button>
+        <button class="btn btn-default" id="my-auto-loc" type="button" onclick="myAutoLoc()">Auto set my location</button>
+        <button class="btn btn-default" id="help-button" type="button" onclick="toggleHelp()">Help</button>
     </div>
     <div id="map-instructions" hidden>
         Clicking a button below then clicking on the map will create a new location using the name you have currently in the text box.<br>
@@ -24,27 +24,27 @@
     <div class="col-lg-4">
         <h3>Locations</h3>
         {% for marker in fingr_user.static_locations.all %}
-            <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
+            <button class="btn btn-default" id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
         {% endfor %}
         {% for friend in fingr_user.friends.all %}
             {% for marker in friend.static_locations.all %}
-                <button id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
+                <button class="btn btn-default" id="marker-{{ marker.id }}" type="button" onclick="selectMarker({{ marker.id }})">{{ marker.name }}</button><br>
             {% endfor %}
         {% endfor %}
     </div>
     <div class="col-lg-4">
         <h3>Friends' Locations</h3>
         {% for friend in fingr_user.friends.all %}
-            <button id="friend-{{ friend.full_name }}" type="button" onclick="selectFriendLocation('{{ friend.full_name }}')">{{ friend.full_name }}</button>
+            <button class="btn btn-default" id="friend-{{ friend.full_name }}" type="button" onclick="selectFriendLocation('{{ friend.full_name }}')">{{ friend.full_name }}</button>
         {% endfor %}
     </div>
     <div class="col-lg-4">
         <h3>Events</h3>
         {% for event in my_events %}
-            <button id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
+            <button class="btn btn-default" id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
         {% endfor %}
         {% for event in friends_events %}
-            <button id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
+            <button class="btn btn-default" id="event-{{ event.pk }}" type="button" onclick="selectEvent({{ event.pk }})">{{ event.title }}</button><br>
         {% endfor %}
     </div>
     </div>
