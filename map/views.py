@@ -170,4 +170,10 @@ def get_events(request):
         e['id'] = event.pk
         response.append(e)
 
+    for event in Event.objects.filter(owner__in=user.friends_list):
+        e = model_to_dict(event, fields=['title', 'latitude', 'longitude'])
+        e['owner'] = event.owner.full_name
+        e['id'] = event.pk
+        response.append(e)
+
     return HttpResponse(json.dumps(response))
