@@ -110,6 +110,7 @@
         var map;
         var markers = {};
         var friendMarker = {};
+        var events = {};
         var selectedMarker;
         var meMarker;
         var scaledSize = new google.maps.Size(23, 34);
@@ -249,6 +250,19 @@
                 });
                 friendMarker[data.name] = friendLocation;
                 return friendLocation;
+            }
+
+            function makeEventMarker(data) {
+                var latLng = new google.maps.LatLng(data.latitude, data.longitude);
+                var eventMarker = new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            title: data.name,
+                            draggable: false,
+                            icon: icons.friend
+                });
+                events[data.id] = eventMarker;
+                return eventMarker;
             }
 
             function clickOnMap(event) {
