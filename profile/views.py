@@ -80,6 +80,7 @@ def add_custom_times(request):
 
 
                     return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
+                    #return render_to_response('edit_profile.html')
 
 
         form = CustomTimesForm()
@@ -236,7 +237,7 @@ def view_profile(request, target_user_pk):
 
 @login_required
 def edit_profile(request):
-
+    userMessage = ""
 
 
     if request.user.is_authenticated():
@@ -246,7 +247,6 @@ def edit_profile(request):
         profile_form = FingrUserForm(initial= {'first_name': f_user.first_name ,
                                              'last_name': f_user.last_name,
                                              'visibility': f_user.visibility},)
-
         if request.method == "POST":
 
             profile_form = FingrUserForm( request.POST, request.FILES)
@@ -258,11 +258,13 @@ def edit_profile(request):
                 f_user.save()
 
 
-                return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
+                #return  render_to_response('updated_profile.html', context_instance = RequestContext(request))
+                #return render_to_response('edit_profile.html')
+                userMessage = "Profile updated."
             else:
                 print profile_form.errors
 
-        return render_to_response('edit_profile.html', {'profile_form': profile_form, }, context_instance = RequestContext(request))
+        return render_to_response('edit_profile.html', {'profile_form': profile_form, 'userMessage':userMessage}, context_instance = RequestContext(request))
     else:
 
         return render_to_response('need_to_login.html', context_instance = RequestContext(request))

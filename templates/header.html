@@ -14,16 +14,23 @@
                         {% if fingr_user.available %}
                             <span class="glyphicon-green">
                          <span class="glyphicon glyphicon-chevron-up "></span>
-                                - Free
-                            </span>
+                                {% if fingr_user.automatic_availability %}
+                                </span><span class="glyphicon-yellow">- Automatic</span>
+                                {% else %}
+                                - Free </span>
+                                {% endif %}
+
 
 
 
                         {% else %}
                         <span class="glyphicon-red">
                          <span class="glyphicon glyphicon-chevron-down "></span>
-                                - Unavailable
-                            </span>
+                                {% if fingr_user.automatic_availability %}
+                                </span><span class="glyphicon-yellow">- Automatic</span>
+                                {% else %}
+                                - Unavailable </span>
+                                {% endif %}
                         {% endif %}
 
 
