@@ -344,7 +344,7 @@ def activate(request):
             return render(request, 'login.html', context)
         else:
             context['code_fail'] = True
-        return render(request, 'activate.html', context)
+        return redirect('main.views.login')
     else:
         context['user_fail'] = True
         return render(request, 'activate.html', context)
