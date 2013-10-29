@@ -257,13 +257,21 @@
                             position: latLng,
                             map: map,
                             title: data.title,
-                            draggable: true,
+                            draggable: data.draggable,
                             icon: icons.default,
                             eventId: data.id,
                             fingrOwner: data.owner,
                 });
                 google.maps.event.addDomListener(eventMarker, 'dragend', function(event) {
-                    console.log(this);
+                    $.ajax({
+                        url: "{% url 'map.views.set_event_marker' %}",
+                        data: {
+                            lat: event.latLng.lat(),
+                            lng: event.latLng.lng(),
+                            id: this.eventId
+                        },
+                        type: 'POST'
+                    });
                 });
                 events[data.id] = eventMarker;
                 return eventMarker;

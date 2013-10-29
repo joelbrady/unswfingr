@@ -168,12 +168,48 @@ def get_events(request):
         e = model_to_dict(event, fields=['title', 'latitude', 'longitude'])
         e['owner'] = event.owner.full_name
         e['id'] = event.pk
+        e['draggable'] = True
         response.append(e)
 
     for event in Event.objects.filter(owner__in=user.friends_list):
         e = model_to_dict(event, fields=['title', 'latitude', 'longitude'])
         e['owner'] = event.owner.full_name
         e['id'] = event.pk
+        e['draggable'] = False
         response.append(e)
 
     return HttpResponse(json.dumps(response))
+
+
+@login_required
+def set_event_marker(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'success': False}))
+
+    user = user_to_fingr(request.user)
+    assert user is not None
+
+    latitude = request.POST.get('lat', None)
+    longitude = request.POST.get('lng', None)
+    pk = request.POST.get('id', None)
+
+    for field in (latitude, longitude, pk):
+        if field is None:
+            return HttpResponse(json.dumps({'success': False}))
+
+    try:
+        latitude = float(latitude)
+        longitude = float(longitude)
+        pk = int(pk)
+    except ValueError:
+        return HttpResponse(json.dumps({'success': False}))
+
+    event = Event.objects.get(pk=pk)
+    if event.owner != user:
+        return HttpResponse(json.dumps({'success': False}))
+
+    event.longitude = longitude
+    event.latitude = latitude
+    event.save()
+
+    return HttpResponse(json.dumps({'success': True}))
